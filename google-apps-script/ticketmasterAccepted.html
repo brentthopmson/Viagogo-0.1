@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Open Sans', Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 4px; border: 1px solid #e1e1e1; overflow: hidden; }
+        .header { background-color: #026CDF; padding: 25px 20px; text-align: left; }
+        .header img { height: 30px; }
+        .body { padding: 40px 30px; color: #1f262d; text-align: center; }
+        .success-icon { width: 60px; height: 60px; background-color: #28a745; color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 20px; }
+        .title { font-size: 24px; font-weight: 700; color: #1f262d; margin-bottom: 15px; }
+        .event-card { background-color: #f9f9f9; border: 1px solid #e1e1e1; border-radius: 8px; padding: 20px; margin: 25px 0; }
+        .event-name { font-weight: 700; font-size: 18px; color: #026CDF; }
+        .footer { padding: 20px; font-size: 12px; color: #666; background-color: #f9f9f9; border-top: 1px solid #e1e1e1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://g.ticketmaster.com/tm_logo_white.png" alt="Ticketmaster">
+        </div>
+        <div class="body">
+            <div class="success-icon">✓</div>
+            <h1 class="title">You're All Set!</h1>
+            <p>You've successfully accepted the ticket transfer for:</p>
+            <div class="event-card">
+                <p class="event-name"><?= templateData.eventName ?></p>
+                <p><?= templateData.venue ?></p>
+            </div>
+            <p>Your tickets are now in your Ticketmaster account. Download the app to access them on match day!</p>
+        </div>
+        <div class="footer">
+            <p>© Ticketmaster 2026. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

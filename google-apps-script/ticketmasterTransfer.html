@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Open Sans', Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; overflow: hidden; border-radius: 4px; border: 1px solid #e1e1e1; }
+        .header { background-color: #026CDF; padding: 25px 20px; text-align: left; }
+        .header img { height: 30px; }
+        .body { padding: 40px 30px; color: #1f262d; line-height: 1.5; }
+        .title { font-size: 28px; font-weight: 700; margin-bottom: 25px; color: #026CDF; }
+        .event-box { border: 1px solid #e1e1e1; border-radius: 8px; padding: 0; margin: 30px 0; overflow: hidden; }
+        .event-image { width: 100%; height: 180px; object-fit: cover; background-color: #026CDF; }
+        .event-info { padding: 25px; }
+        .event-name { font-size: 24px; font-weight: 700; margin: 0 0 10px 0; color: #1f262d; }
+        .event-detail { font-size: 16px; color: #555; margin-bottom: 5px; }
+        .seat-badge { background-color: #026CDF; color: #ffffff; padding: 8px 15px; border-radius: 4px; display: inline-block; font-weight: 700; margin-top: 15px; font-size: 14px; }
+        .button-container { text-align: center; margin: 40px 0; }
+        .button { background-color: #026CDF; color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 4px; font-weight: 700; font-size: 16px; display: inline-block; transition: background-color 0.2s; }
+        .onboarding { border-top: 1px solid #e1e1e1; padding-top: 30px; margin-top: 40px; }
+        .onboarding h2 { font-size: 18px; color: #1f262d; margin-bottom: 20px; }
+        .step { margin-bottom: 20px; font-size: 15px; display: flex; align-items: flex-start; }
+        .step-num { color: #026CDF; font-weight: 800; font-size: 18px; margin-right: 15px; width: 25px; text-align: center; }
+        .footer { padding: 30px; text-align: left; font-size: 12px; color: #666666; background-color: #f9f9f9; border-top: 1px solid #e1e1e1; }
+        .footer a { color: #026CDF; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://g.ticketmaster.com/tm_logo_white.png" alt="Ticketmaster">
+        </div>
+        <div class="body">
+            <h1 class="title">You've Got Tickets!</h1>
+            <p><strong><?= templateData.senderName ?></strong> just sent you a ticket transfer. It's time to get excited!</p>
+            
+            <div class="event-box">
+                <? if (templateData.coverImage) { ?>
+                    <img src="<?= templateData.coverImage ?>" class="event-image" alt="Event Image">
+                <? } ?>
+                <div class="event-info">
+                    <p class="event-name"><?= templateData.eventName ?></p>
+                    <p class="event-detail"><?= templateData.venue ?> • <?= templateData.location ?></p>
+                    <p class="event-detail"><?= templateData.dateTime ?></p>
+                    <div class="seat-badge">
+                        Sec <?= templateData.section ?>, Row <?= templateData.row ?>, Seat <?= templateData.seatNumbers ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <a href="<?= templateData.link ?>" class="button">Accept Tickets</a>
+            </div>
+
+            <div class="onboarding">
+                <h2>How to get your tickets:</h2>
+                <div class="step">
+                    <span class="step-num">1</span>
+                    <span>Click <strong>Accept Tickets</strong> and sign in to your Ticketmaster account (or create one).</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">2</span>
+                    <span>Download the <strong>Ticketmaster App</strong>. Your tickets will be waiting in 'My Events'.</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">3</span>
+                    <span>On event day, just scan your ticket directly from the app. Easy as that.</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>This transfer will expire soon. Please accept your tickets as soon as possible.</p>
+            <p>© Ticketmaster 2026. <a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a></p>
+        </div>
+    </div>
+</body>
+</html>

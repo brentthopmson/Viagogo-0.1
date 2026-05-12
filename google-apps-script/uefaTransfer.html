@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f9; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { background-color: #003399; background-image: linear-gradient(135deg, #001C55 0%, #003399 100%); padding: 40px 20px; text-align: center; color: #ffffff; }
+        .header img { max-width: 150px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .body { padding: 40px 30px; color: #333333; line-height: 1.6; }
+        .greeting { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #001C55; }
+        .event-card { background-color: #f8fbff; border: 1px solid #e1e8f0; border-radius: 12px; padding: 25px; margin: 30px 0; border-left: 5px solid #003399; }
+        .event-name { font-size: 22px; font-weight: 800; color: #001C55; margin: 0 0 10px 0; }
+        .event-detail { display: flex; margin-bottom: 8px; font-size: 14px; }
+        .detail-label { font-weight: 700; color: #666666; width: 80px; }
+        .detail-value { color: #333333; font-weight: 600; }
+        .seats { background-color: #003399; color: #ffffff; padding: 15px; border-radius: 8px; margin-top: 15px; display: inline-block; font-size: 13px; font-weight: 700; }
+        .button-container { text-align: center; margin: 40px 0; }
+        .button { background-color: #003399; color: #ffffff !important; padding: 18px 35px; text-decoration: none; border-radius: 50px; font-weight: 800; font-size: 16px; display: inline-block; box-shadow: 0 4px 15px rgba(0, 51, 153, 0.3); transition: transform 0.2s; }
+        .onboarding { background-color: #f0f4f8; border-radius: 12px; padding: 30px; margin-top: 40px; }
+        .onboarding h2 { font-size: 16px; color: #001C55; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .step { margin-bottom: 15px; font-size: 14px; display: flex; align-items: flex-start; }
+        .step-num { background-color: #003399; color: #ffffff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; margin-right: 12px; flex-shrink: 0; margin-top: 2px; }
+        .footer { padding: 30px; text-align: center; font-size: 12px; color: #999999; background-color: #fafafa; border-top: 1px solid #eeeeee; }
+        .footer p { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://img.uefa.com/img/uefacom/ucl/2021/logos/logo_dark.svg" alt="UEFA Champions League 2026">
+            <h1>Official Ticket Transfer</h1>
+        </div>
+        <div class="body">
+            <p class="greeting">Hi <?= templateData.fullName ?>,</p>
+            <p>Great news! <strong><?= templateData.senderName ?></strong> has just transferred a ticket to you for an upcoming UEFA match.</p>
+            
+            <div class="event-card">
+                <p class="event-name"><?= templateData.eventName ?></p>
+                <div class="event-detail">
+                    <span class="detail-label">Venue:</span>
+                    <span class="detail-value"><?= templateData.venue ?>, <?= templateData.location ?></span>
+                </div>
+                <div class="event-detail">
+                    <span class="detail-label">Date:</span>
+                    <span class="detail-value"><?= templateData.dateTime ?></span>
+                </div>
+                <div class="event-detail">
+                    <span class="detail-label">Doors:</span>
+                    <span class="detail-value"><?= templateData.doorTime ?></span>
+                </div>
+                <div class="seats">
+                    Section <?= templateData.section ?> | Row <?= templateData.row ?> | Seat <?= templateData.seatNumbers ?>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <a href="<?= templateData.link ?>" class="button">Accept Ticket Now</a>
+            </div>
+
+            <div class="onboarding">
+                <h2>How to access your tickets:</h2>
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div>Click the <strong>Accept Ticket</strong> button above to secure your transfer.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div>Download the <strong>UEFA Mobile Tickets</strong> app from the App Store or Google Play.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div>Log in to the app using the same email address: <strong><?= templateData.emailAddress ?></strong>.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div>Your tickets will appear in the "My Tickets" section once the transfer is finalized.</div>
+                </div>
+            </div>
+            
+            <p style="font-size: 13px; color: #666; margin-top: 30px;">
+                Note: To ensure stadium entry, please make sure your mobile device is charged and you have the app installed before arriving at the venue.
+            </p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 UEFA. All rights reserved.</p>
+            <p>UEFA Champions League™ - Road to 2026</p>
+            <p>This is an automated message, please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

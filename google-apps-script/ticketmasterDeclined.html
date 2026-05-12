@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Open Sans', Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 4px; border: 1px solid #e1e1e1; overflow: hidden; }
+        .header { background-color: #026CDF; padding: 25px 20px; }
+        .header img { height: 30px; }
+        .body { padding: 40px 30px; color: #1f262d; }
+        .title { font-size: 24px; font-weight: 700; color: #dc3545; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e1e1e1; border-radius: 8px; padding: 20px; background-color: #fdf2f2; }
+        .footer { padding: 20px; font-size: 12px; color: #666; background-color: #f9f9f9; border-top: 1px solid #e1e1e1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><img src="https://g.ticketmaster.com/tm_logo_white.png" alt="Ticketmaster"></div>
+        <div class="body">
+            <h1 class="title">Transfer Declined</h1>
+            <p>The ticket transfer for <strong><?= templateData.eventName ?></strong> has been declined.</p>
+            <div class="info-box">
+                <p style="margin:0;">The tickets have been returned to <strong><?= templateData.senderName ?></strong>. If you didn't mean to decline, please contact the sender directly.</p>
+            </div>
+        </div>
+        <div class="footer"><p>© Ticketmaster 2026. All rights reserved.</p></div>
+    </div>
+</body>
+</html>

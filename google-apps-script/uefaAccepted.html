@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f9; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { background-color: #008000; background-image: linear-gradient(135deg, #004d00 0%, #008000 100%); padding: 40px 20px; text-align: center; color: #ffffff; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 800; text-transform: uppercase; }
+        .body { padding: 40px 30px; color: #333333; line-height: 1.6; }
+        .success-icon { font-size: 60px; color: #008000; margin-bottom: 20px; display: block; text-align: center; }
+        .greeting { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #004d00; text-align: center; }
+        .confirmation-box { background-color: #f0fff0; border: 1px solid #c2e0c2; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: center; }
+        .event-name { font-size: 20px; font-weight: 800; color: #004d00; margin-bottom: 10px; }
+        .next-steps { background-color: #f8fbff; border-radius: 12px; padding: 30px; margin-top: 40px; }
+        .next-steps h2 { font-size: 16px; color: #001C55; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .step { margin-bottom: 15px; font-size: 14px; }
+        .footer { padding: 30px; text-align: center; font-size: 12px; color: #999999; background-color: #fafafa; border-top: 1px solid #eeeeee; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Transfer Confirmed</h1>
+        </div>
+        <div class="body">
+            <div class="success-icon">✓</div>
+            <p class="greeting">Success, <?= templateData.fullName ?>!</p>
+            <p style="text-align: center;">You have successfully accepted the ticket transfer for:</p>
+            
+            <div class="confirmation-box">
+                <p class="event-name"><?= templateData.eventName ?></p>
+                <p style="margin: 0; font-weight: 600; color: #666;"><?= templateData.venue ?></p>
+            </div>
+
+            <div class="next-steps">
+                <h2>Next Steps:</h2>
+                <p class="step">1. Open your <strong>UEFA Mobile Tickets</strong> app.</p>
+                <p class="step">2. Your ticket is currently being finalized and will appear in your account shortly.</p>
+                <p class="step">3. Ensure your phone is fully charged on match day.</p>
+            </div>
+            
+            <p style="text-align: center; margin-top: 40px; font-size: 14px;">We look forward to seeing you at the stadium!</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 UEFA. All rights reserved.</p>
+            <p>UEFA Champions League™ - Road to 2026</p>
+        </div>
+    </div>
+</body>
+</html>
