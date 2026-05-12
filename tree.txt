@@ -1,0 +1,30 @@
+/api
+  - index.py
+/app
+  - favicon.ico
+  - globals.css
+  - layout.tsx
+  - page.tsx
+  /account
+    - page.tsx
+  /debounce
+    - page.tsx
+  /email-verifier
+    - page.tsx
+  /api/docs
+    - page.tsx
+/public
+  - next.svg
+  - vercel.svg
+
+
+
+/api
+  /controllers
+    - usercontroller.py
+    - apicontroller.py
+  /services
+    - userservice.py
+    - apiservice.py
+    - externalfunction.py
+  index.py
