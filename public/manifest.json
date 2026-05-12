@@ -2,7 +2,7 @@
   "name": "viagogo Tickets",
   "short_name": "viagogo",
   "description": "Buy and sell concert, sports and theatre tickets on the viagogo marketplace",
-  "start_url": "/",
+  "start_url": "/login",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
