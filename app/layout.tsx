@@ -13,6 +13,7 @@ export const metadata = {
   title: 'Tickets - Concert, Sport & Theatre Tickets | viagogo the Ticket Marketplace',
   description: 'Tickets for Concerts, Sport, Theatre at viagogo, an online ticket marketplace. Buy and Sell Tickets.',
   keywords: 'viagogo, buy tickets, sell tickets, concert, sport, theater',
+  manifest: '/manifest.json',
   viewport: 'width=device-width, initial-scale=1, format-detection=telephone=no',
   icons: {
     icon: [
@@ -44,6 +45,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="theme-color" content="#00A0D2" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="viagogo" />
+        <link rel="manifest" href="/manifest.json" />
         <link rel="preconnect" href="https://ws.vggcdn.net/" />
         <link rel="dns-prefetch" href="https://ws.vggcdn.net/" />
         <link rel="preconnect" href="https://img.vggcdn.net/" />
