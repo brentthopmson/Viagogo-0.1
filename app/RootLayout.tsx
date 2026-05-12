@@ -40,7 +40,7 @@ export default function RootLayoutWrapper({
   const handleSignOut = () => {
     sessionStorage.removeItem("loggedInAdmin");
     sessionStorage.removeItem("adminData");
-    window.location.href = '/login';
+    router.push('/login'); // Changed from window.location.href to router.push
   };
 
   const shouldShowHeaderFooter =
