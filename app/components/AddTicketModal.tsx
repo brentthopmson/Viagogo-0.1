@@ -10,6 +10,7 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
   const { fetchAllTickets } = useUser();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [flipImagesList, setFlipImagesList] = useState<string[]>(['']);
   const [formData, setFormData] = useState({
     eventName: '',
     venue: '',
@@ -42,6 +43,22 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
     });
   };
 
+  const handleAddFlipImage = () => {
+    setFlipImagesList([...flipImagesList, '']);
+  };
+
+  const handleRemoveFlipImage = (index: number) => {
+    const newList = [...flipImagesList];
+    newList.splice(index, 1);
+    setFlipImagesList(newList.length ? newList : ['']);
+  };
+
+  const handleFlipImageChange = (index: number, value: string) => {
+    const newList = [...flipImagesList];
+    newList[index] = value;
+    setFlipImagesList(newList);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -61,6 +78,9 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
       Object.entries(formData).forEach(([key, value]) => {
         payload.append(key, value);
       });
+      
+      const flipImagesString = flipImagesList.filter(url => url.trim() !== '').join(',');
+      payload.append("flipImages", flipImagesString);
       
       const POST_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbxcoCDXcWlKPDbttlFf2eR_EeuMkfupy5dfgIOklM1ShEZ30gfD3wzZZOxkKV4xIWEl/exec";
       const response = await fetch(POST_URL, {
@@ -261,6 +281,40 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
               placeholder="https://example.com/image.jpg"
               className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#001B41]"
             />
+          </div>
+
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-1 ml-1">
+              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest">Flip Images URLs</label>
+              <button 
+                type="button" 
+                onClick={handleAddFlipImage}
+                className="text-[10px] font-bold text-[#89CF28] hover:underline"
+              >
+                + Add Another Image
+              </button>
+            </div>
+            <p className="text-[10px] text-gray-500 font-bold mb-2 ml-1">Note: The first URL displays first, and the last displays last.</p>
+            <div className="space-y-2">
+              {flipImagesList.map((url, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <input
+                    type="url"
+                    value={url}
+                    onChange={(e) => handleFlipImageChange(index, e.target.value)}
+                    placeholder="https://example.com/flip-image.jpg"
+                    className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#001B41]"
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => handleRemoveFlipImage(index)}
+                    className="p-3 text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="mb-4">

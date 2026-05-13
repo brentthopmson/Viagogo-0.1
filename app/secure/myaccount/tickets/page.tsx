@@ -15,7 +15,9 @@ import {
     faSignOutAlt,
     faBars,
     faTimes,
-    faLock
+    faLock,
+    faSearch,
+    faExchangeAlt
 } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 
@@ -36,6 +38,7 @@ export default function MyTicketsPage() {
     const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
     const [isSessionValid, setIsSessionValid] = useState<boolean | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const adminUsername = sessionStorage.getItem("loggedInAdmin");
@@ -55,14 +58,50 @@ export default function MyTicketsPage() {
         } else {
             router.replace('/login');
         }
-    }, [setAdmin, router]);
+    }, [setAdmin, router, fetchAllTickets]);
 
     useEffect(() => {
         if (isSessionValid === true && loggedInAdmin && Array.isArray(allTickets)) {
-            const filtered = allTickets.filter((t) => t.admin === loggedInAdmin);
+            const filtered = allTickets.filter((t) => {
+                // 1. Must belong to the logged-in admin
+                const matchesAdmin = t.admin === loggedInAdmin;
+                
+                // 2. Must not be deleted
+                const isNotDeleted = !t.deletedSTAMP || t.deletedSTAMP.trim() === "";
+                
+                // 3. Platform must include "viagogo"
+                const platformList = t.platform?.toLowerCase().split(',').map(p => p.trim()) || [];
+                const matchesPlatform = platformList.includes("viagogo");
+
+                if (!matchesAdmin || !isNotDeleted || !matchesPlatform) return false;
+
+                // 4. Tab Filter
+                let matchesTab = false;
+                if (activeTab === 'upcoming') {
+                    matchesTab = t.eventStatus === 'ACTIVE' || t.eventStatus === 'WAITING';
+                } else {
+                    matchesTab = t.eventStatus === 'PAST';
+                }
+                if (!matchesTab) return false;
+
+                // 5. Search Filter
+                if (searchTerm.trim()) {
+                    const term = searchTerm.toLowerCase();
+                    const matchesSearch = 
+                        t.eventName?.toLowerCase().includes(term) ||
+                        t.ticketId?.toLowerCase().includes(term) ||
+                        t.venue?.toLowerCase().includes(term) ||
+                        t.location?.toLowerCase().includes(term) ||
+                        t.seatNumbers?.toLowerCase().includes(term);
+                    
+                    if (!matchesSearch) return false;
+                }
+
+                return true;
+            });
             setFilteredTickets(filtered);
         }
-    }, [allTickets, loggedInAdmin, isSessionValid]);
+    }, [allTickets, loggedInAdmin, isSessionValid, activeTab, searchTerm]);
 
     const handleLogout = () => {
         sessionStorage.removeItem("loggedInAdmin");
@@ -74,11 +113,13 @@ export default function MyTicketsPage() {
     };
 
     const sidebarItems = [
-        { icon: faTicketAlt, label: 'My Purchases', active: true },
-        { icon: faUserCircle, label: 'Personal Details', active: false },
-        { icon: faCog, label: 'Account Settings', active: false },
-        { icon: faShieldAlt, label: 'Privacy', active: false },
-        { icon: faQuestionCircle, label: 'Help', active: false },
+        { icon: faTicketAlt, label: 'My Purchases', active: true, href: '/secure/myaccount/tickets' },
+        { icon: faExchangeAlt, label: 'Transfers', active: false, href: '/secure/myaccount/transfers' },
+        { icon: faUserCircle, label: 'Personal Details', active: false, href: '#' },
+        { icon: faCog, label: 'Account Settings', active: false, href: '#' },
+        { icon: faShieldAlt, label: 'Privacy', active: false, href: '#' },
+        { icon: faQuestionCircle, label: 'Help', active: false, href: '#' },
+        { icon: faSignOutAlt, label: 'Sign Out', active: false, action: handleLogout },
     ];
 
     if (isSessionValid === null) return null;
@@ -102,7 +143,8 @@ export default function MyTicketsPage() {
                     <div className="flex items-center space-x-6">
                         <span className="hidden md:block text-sm font-bold uppercase tracking-wider text-gray-500">Hi, {admin?.username}</span>
                         <button onClick={handleLogout} className="text-sm font-black text-[#001B41] hover:text-[#89CF28] transition-colors flex items-center">
-                            <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" /> Sign Out
+                            <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" /> 
+                            <span className="hidden sm:inline">Sign Out</span>
                         </button>
                     </div>
                 </div>
@@ -122,13 +164,19 @@ export default function MyTicketsPage() {
                         </div>
                         <nav className="space-y-1">
                             {sidebarItems.map((item, i) => (
-                                <button
-                                    key={i}
-                                    className={`w-full text-left px-4 py-3 rounded-[12px] flex items-center space-x-3 transition-all ${item.active ? 'bg-[#89CF28] text-white font-black shadow-lg shadow-[#89CF28]/20' : 'text-[#001B41] hover:bg-white hover:shadow-sm font-bold'}`}
-                                >
-                                    <FontAwesomeIcon icon={item.icon} className="w-5" />
-                                    <span>{item.label}</span>
-                                </button>
+                                item.href && item.href !== '#' ? (
+                                    <Link key={i} href={item.href}
+                                        className={`w-full text-left px-4 py-3 rounded-[12px] flex items-center space-x-3 transition-all ${item.active ? 'bg-[#89CF28] text-white font-black shadow-lg shadow-[#89CF28]/20' : 'text-[#001B41] hover:bg-white hover:shadow-sm font-bold'}`}>
+                                        <FontAwesomeIcon icon={item.icon} className="w-5" />
+                                        <span>{item.label}</span>
+                                    </Link>
+                                ) : (
+                                    <button key={i} onClick={(item as any).action}
+                                        className={`w-full text-left px-4 py-3 rounded-[12px] flex items-center space-x-3 transition-all ${item.active ? 'bg-[#89CF28] text-white font-black shadow-lg shadow-[#89CF28]/20' : ((item as any).label === 'Sign Out' ? 'text-red-600 hover:bg-red-50' : 'text-[#001B41] hover:bg-white hover:shadow-sm font-bold')}`}>
+                                        <FontAwesomeIcon icon={item.icon} className="w-5" />
+                                        <span>{item.label}</span>
+                                    </button>
+                                )
                             ))}
                         </nav>
 
@@ -148,6 +196,18 @@ export default function MyTicketsPage() {
                 {/* Main Content */}
                 <main className="flex-1">
                     <h1 className="text-4xl font-black text-[#001B41] mb-8 tracking-tight">My Purchases</h1>
+
+                    {/* Search */}
+                    <div className="relative mb-6">
+                        <input
+                            type="text"
+                            placeholder="Search by event, ticket ID, or venue..."
+                            className="w-full p-4 pl-12 bg-white border border-gray-100 rounded-2xl text-[#001B41] placeholder-gray-300 font-bold text-sm outline-none focus:ring-4 focus:ring-[#89CF28]/10 transition-all shadow-sm"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                    </div>
 
                     {/* Tabs */}
                     <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">

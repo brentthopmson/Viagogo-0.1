@@ -69,7 +69,8 @@ export default function TicketDetailsAccountPage() {
 
     useEffect(() => {
         if (isSessionValid && allTickets.length > 0) {
-            const foundTicket = allTickets.find(t => t.ticketId === ticketId);
+            // Try to find ticket by ticketId first, then fallback to sn
+            const foundTicket = allTickets.find(t => t.ticketId === ticketId || t.sn === ticketId);
             if (foundTicket) {
                 setTicket(foundTicket);
             }

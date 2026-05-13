@@ -13,8 +13,11 @@ interface TicketCardProps {
 }
 
 const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
+    // Use ticketId if available, fallback to sn (serial number) as unique identifier
+    const ticketIdentifier = ticket.ticketId || ticket.sn || 'unknown';
+    
     return (
-        <Link href={`/secure/myaccount/tickets/${ticket.ticketId}`}>
+        <Link href={`/secure/myaccount/tickets/${ticketIdentifier}`}>
             <div className="bg-white rounded-[8px] border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer mb-4">
                 <div className="flex flex-col md:flex-row">
                     {/* Event Image */}

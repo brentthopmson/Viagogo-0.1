@@ -11,6 +11,7 @@ export interface User {
   emailAddress: string;
   ticketId: string;
   seatNumbers: string;
+  transferringSeatNumbers?: string;
   coverImage: string;
   eventName: string;
   dateTime: string;

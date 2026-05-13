@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '../UserContext'; 
 import { Ticket } from '../types';
 
@@ -12,6 +12,7 @@ interface AddUserModalProps {
     phoneNumber: string;
     emailAddress: string;
     seatNumbers: string;
+    transferringSeatNumbers: string;
     senderName: string;
     senderEmail: string;
     userPlatform: string;
@@ -23,6 +24,7 @@ interface AddUserModalProps {
       phoneNumber: string;
       emailAddress: string;
       seatNumbers: string;
+      transferringSeatNumbers: string;
       senderName: string;
       senderEmail: string;
       userPlatform: string;
@@ -46,7 +48,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   // Initialize defaults from admin if available
-  useState(() => {
+  useEffect(() => {
     if (admin) {
       setFormData(prev => ({
         ...prev,
@@ -56,7 +58,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
         sendType: prev.sendType || 'draft'
       }));
     }
-  });
+  }, [admin, setFormData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -65,6 +67,37 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       [name]: value
     }));
   };
+
+  const handleTicketChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const ticketId = e.target.value;
+    setSelectedTicketId(ticketId);
+    
+    const selectedTicket = tickets.find(t => t.ticketId === ticketId);
+    setFormData(prev => ({
+      ...prev,
+      seatNumbers: selectedTicket?.seatNumbers || '',
+      transferringSeatNumbers: '' // reset selection when ticket changes
+    }));
+  };
+
+  const handleSeatToggle = (seat: string) => {
+    setFormData(prev => {
+      const currentSeats = prev.transferringSeatNumbers ? prev.transferringSeatNumbers.split(',').map(s => s.trim()) : [];
+      let newSeats;
+      if (currentSeats.includes(seat)) {
+        newSeats = currentSeats.filter(s => s !== seat);
+      } else {
+        newSeats = [...currentSeats, seat];
+      }
+      return {
+        ...prev,
+        transferringSeatNumbers: newSeats.join(', ')
+      };
+    });
+  };
+
+  const availableSeats = tickets.find(t => t.ticketId === selectedTicketId)?.seatNumbers?.split(',').map(s => s.trim()).filter(Boolean) || [];
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,7 +131,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       payload.append('fullName', formData.fullName);
       payload.append('phoneNumber', formData.phoneNumber);
       payload.append('emailAddress', formData.emailAddress);
-      payload.append('seatNumbers', formData.seatNumbers);
+      payload.append('transferringSeatNumbers', formData.transferringSeatNumbers);
       payload.append('ticketId', selectedTicketId);
       payload.append('timestamp', timestamp);
       payload.append('admin', admin.username);
@@ -201,7 +234,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Select Ticket*</label>
               <select
                 value={selectedTicketId}
-                onChange={e => setSelectedTicketId(e.target.value)}
+                onChange={handleTicketChange}
                 className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#001B41]"
                 required
               >
@@ -214,17 +247,61 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               </select>
             </div>
 
+            {selectedTicketId && (
+              <div className="md:col-span-2">
+                <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Select Seats to Transfer*</label>
+                <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-xl border-2 border-transparent">
+                  {availableSeats.length > 0 ? (
+                    availableSeats.map((seat, index) => {
+                      const isSelected = formData.transferringSeatNumbers.split(',').map(s => s.trim()).includes(seat);
+                      return (
+                        <button
+                          type="button"
+                          key={index}
+                          onClick={() => handleSeatToggle(seat)}
+                          className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${
+                            isSelected
+                              ? 'bg-[#89CF28] text-white shadow-md'
+                              : 'bg-white text-gray-600 border border-gray-200 hover:border-[#89CF28]'
+                          }`}
+                        >
+                          {seat}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-gray-500 font-bold">No seat numbers available for this ticket. You can manually enter them below.</p>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div>
-              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Seat Numbers*</label>
+              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Original Seat Numbers* (Reference)</label>
               <input
                 type="text"
                 name="seatNumbers"
                 value={formData.seatNumbers}
                 onChange={handleChange}
-                className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#001B41]"
+                className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-gray-500"
                 required
+                readOnly
               />
             </div>
+            
+            {availableSeats.length === 0 && (
+              <div>
+                <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Manual Transfer Seats*</label>
+                <input
+                  type="text"
+                  name="transferringSeatNumbers"
+                  value={formData.transferringSeatNumbers}
+                  onChange={handleChange}
+                  className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#001B41]"
+                  required
+                />
+              </div>
+            )}
 
             <div>
               <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sender Name*</label>

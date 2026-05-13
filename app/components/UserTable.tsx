@@ -19,6 +19,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, tickets }) => {
     phoneNumber: '',
     emailAddress: '',
     seatNumbers: '',
+    transferringSeatNumbers: '',
     senderName: '',
     senderEmail: '',
     userPlatform: 'viagogo',
@@ -71,13 +72,12 @@ const UserTable: React.FC<UserTableProps> = ({ users, tickets }) => {
   return (
     <>
       <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Users</h2>
+        <div className="flex flex-col md:flex-row justify-end items-start md:items-center mb-6 gap-4">
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full md:w-auto">
             <div className="w-full sm:w-64">
               <input
                 type="text"
-                placeholder="Search users..."
+                placeholder="Search transfers..."
                 value={searchTerm}
                 onChange={handleSearch}
                 className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
@@ -160,7 +160,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, tickets }) => {
 
         {filteredUsers.length === 0 && (
           <div className="text-center py-4 text-gray-500">
-            No users found matching your search criteria.
+            No transfers found matching your search criteria.
           </div>
         )}
       </section>

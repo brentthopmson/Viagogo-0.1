@@ -37,6 +37,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
         emailAddress: '',
         phoneNumber: '',
         seatNumbers: '',
+        transferringSeatNumbers: '',
         sendType: 'draft',
         userPlatform: 'viagogo'
     });
@@ -49,6 +50,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                 setFormData(prev => ({
                     ...prev,
                     seatNumbers: ticket.seatNumbers || '',
+                    transferringSeatNumbers: ''
                 }));
             }
         }
@@ -92,7 +94,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
             payload.append('fullName', formData.fullName);
             payload.append('emailAddress', formData.emailAddress);
             payload.append('phoneNumber', formData.phoneNumber);
-            payload.append('seatNumbers', formData.seatNumbers);
+            payload.append('transferringSeatNumbers', formData.transferringSeatNumbers);
             payload.append('ticketId', ticket.ticketId);
             payload.append('admin', admin.username);
             payload.append('senderName', admin.senderName || 'Viagogo');
@@ -288,9 +290,38 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                         <span className="text-xs font-bold text-gray-400">Event</span>
                                         <span className="text-xs font-black text-[#001B41] line-clamp-1">{ticket.eventName}</span>
                                     </div>
+                                    <div className="py-2 border-b border-gray-200/50">
+                                        <p className="text-xs font-bold text-gray-400 mb-2">Select Seats to Transfer</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {ticket.seatNumbers?.split(',').map(s => s.trim()).filter(Boolean).map((seat, index) => {
+                                                const isSelected = formData.transferringSeatNumbers.split(',').map(s => s.trim()).includes(seat);
+                                                return (
+                                                    <button
+                                                        key={index}
+                                                        onClick={() => {
+                                                            const current = formData.transferringSeatNumbers ? formData.transferringSeatNumbers.split(',').map(s => s.trim()) : [];
+                                                            const next = current.includes(seat) ? current.filter(s => s !== seat) : [...current, seat];
+                                                            setFormData({...formData, transferringSeatNumbers: next.join(', ')});
+                                                        }}
+                                                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
+                                                            isSelected 
+                                                                ? 'bg-[#89CF28] text-white shadow-md' 
+                                                                : 'bg-white text-gray-400 border border-gray-200 hover:border-[#89CF28]'
+                                                        }`}
+                                                    >
+                                                        {seat}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                     <div className="flex justify-between items-center py-2">
-                                        <span className="text-xs font-bold text-gray-400">Seats</span>
-                                        <span className="text-xs font-black text-[#89CF28]">{formData.seatNumbers}</span>
+                                        <span className="text-xs font-bold text-gray-400">Transferring Seats</span>
+                                        <span className="text-xs font-black text-[#89CF28]">{formData.transferringSeatNumbers || 'None selected'}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center py-1">
+                                        <span className="text-[10px] font-bold text-gray-300">Original Total</span>
+                                        <span className="text-[10px] font-black text-gray-300">{formData.seatNumbers}</span>
                                     </div>
                                 </div>
                             </div>
