@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react';
 import { useUser } from '../UserContext'; 
 import { Ticket } from '../types';
 
-const APP_SCRIPT_POST_URL =
-  'https://script.google.com/macros/s/AKfycbxcoCDXcWlKPDbttlFf2eR_EeuMkfupy5dfgIOklM1ShEZ30gfD3wzZZOxkKV4xIWEl/exec';
-
 interface AddUserModalProps {
   tickets: Ticket[];
   formData: {
@@ -118,7 +115,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
 
     // Determine which Apps Script URL to use based on platform
-    // Using the environment variable for the specific deployment URL
     const POST_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbwXIfuadHykMFrMdPPLLP7y0pm4oZ8TJUnM9SMmDp9BkaVLGu9jupU-CuW8Id-Mm1ylxg/exec";
 
     setLoading(true);
@@ -131,16 +127,15 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       payload.append('fullName', formData.fullName);
       payload.append('phoneNumber', formData.phoneNumber);
       payload.append('emailAddress', formData.emailAddress);
-      payload.append('transferringSeatNumbers', formData.transferringSeatNumbers);
+      // Backend handles original seats; we only send the ones being transferred
+      payload.append('transferringSeatNumbers', formData.transferringSeatNumbers); 
       payload.append('ticketId', selectedTicketId);
       payload.append('timestamp', timestamp);
       payload.append('admin', admin.username);
       payload.append('senderName', formData.senderName);
       payload.append('senderEmail', formData.senderEmail);
       payload.append('userPlatform', formData.userPlatform);
-      payload.append('sendType', formData.sendType); // New field: draft or auto
-
-      console.log('Payload:', payload.toString());
+      payload.append('sendType', formData.sendType); 
 
       const response = await fetch(POST_URL, {
         method: 'POST',
@@ -155,11 +150,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       }
 
       const data = await response.json();
-
-      console.log('Response:', data);
       
-      fetchAllUsers(); 
-
       if (data.error) {
         setError(data.error);
       } else {
@@ -174,7 +165,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
         setError('An unknown error occurred.');
       }
     } finally {
-      fetchAllUsers(); 
       setLoading(false);
     }
   };

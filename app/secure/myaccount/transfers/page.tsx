@@ -38,7 +38,7 @@ export default function TransfersPage() {
     const [filteredTransfers, setFilteredTransfers] = useState<User[]>([]);
     const [isSessionValid, setIsSessionValid] = useState<boolean | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [activeStatus, setActiveStatus] = useState<string>('all');
+    const [activeTab, setActiveTab] = useState<'pending' | 'completed'>('pending');
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleLogout = () => {
@@ -59,8 +59,6 @@ export default function TransfersPage() {
         { icon: faQuestionCircle, label: 'Help', active: false, href: '#' },
         { icon: faSignOutAlt, label: 'Sign Out', active: false, action: handleLogout },
     ];
-
-    const statusTabs = ['all', 'WAITING APPROVAL', 'WAITING COMPLETION', 'COMPLETED', 'DECLINED', 'RETRACTED', 'CANCELLED'];
 
     useEffect(() => {
         const adminUsername = sessionStorage.getItem("loggedInAdmin");
@@ -89,9 +87,15 @@ export default function TransfersPage() {
                 u.userPlatform?.toLowerCase() === 'viagogo'
             );
 
-            // Filter by status
-            if (activeStatus !== 'all') {
-                transfers = transfers.filter(u => u.systemStatus === activeStatus);
+            // Filter by tab
+            if (activeTab === 'pending') {
+                transfers = transfers.filter(u => 
+                    u.systemStatus === 'WAITING APPROVAL' || 
+                    u.systemStatus === 'WAITING COMPLETION' ||
+                    !u.systemStatus // Default to pending if no status
+                );
+            } else {
+                transfers = transfers.filter(u => u.systemStatus === 'COMPLETED');
             }
 
             // Filter by search
@@ -106,12 +110,12 @@ export default function TransfersPage() {
 
             setFilteredTransfers(transfers);
         }
-    }, [users, loggedInAdmin, isSessionValid, activeStatus, searchTerm]);
+    }, [users, loggedInAdmin, isSessionValid, activeTab, searchTerm]);
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'WAITING APPROVAL': return 'bg-yellow-50 text-yellow-700 border-yellow-100';
-            case 'WAITING COMPLETION': return 'bg-blue-50 text-blue-700 border-blue-100';
+            case 'WAITING APPROVAL': return 'bg-amber-50 text-amber-700 border-amber-100';
+            case 'WAITING COMPLETION': return 'bg-[#89CF28]/5 text-[#89CF28] border-[#89CF28]/10';
             case 'COMPLETED': return 'bg-green-50 text-green-700 border-green-100';
             case 'DECLINED': return 'bg-red-50 text-red-700 border-red-100';
             case 'RETRACTED': return 'bg-orange-50 text-orange-700 border-orange-100';
@@ -201,25 +205,20 @@ export default function TransfersPage() {
                         <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                     </div>
 
-                    {/* Status Filter Dropdown */}
-                    <div className="mb-6">
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Filter by Status</label>
-                        <div className="relative">
-                            <select 
-                                value={activeStatus} 
-                                onChange={(e) => setActiveStatus(e.target.value)}
-                                className="w-full p-4 bg-white border border-gray-100 rounded-2xl text-[#001B41] font-bold text-sm outline-none appearance-none focus:ring-4 focus:ring-[#89CF28]/10 transition-all cursor-pointer shadow-sm"
-                            >
-                                {statusTabs.map(status => (
-                                    <option key={status} value={status}>
-                                        {status === 'all' ? 'All Statuses' : status}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300">
-                                <FontAwesomeIcon icon={faChevronRight} className="rotate-90 text-[10px]" />
-                            </div>
-                        </div>
+                    {/* Tabs */}
+                    <div className="flex border-b border-gray-100 mb-8 overflow-x-auto">
+                        <button
+                            onClick={() => setActiveTab('pending')}
+                            className={`px-8 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-4 whitespace-nowrap ${activeTab === 'pending' ? 'border-[#89CF28] text-[#001B41]' : 'border-transparent text-gray-400 hover:text-[#001B41]'}`}
+                        >
+                            Pending
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('completed')}
+                            className={`px-8 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-4 whitespace-nowrap ${activeTab === 'completed' ? 'border-[#89CF28] text-[#001B41]' : 'border-transparent text-gray-400 hover:text-[#001B41]'}`}
+                        >
+                            Completed
+                        </button>
                     </div>
 
                     {/* Transfer List */}
