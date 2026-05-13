@@ -6,9 +6,10 @@ import { useUser } from '../../../UserContext';
 import AdminLogin from '../../../components/AdminLogin';
 import UserTable from '../../../components/UserTable';
 import TicketTable from '../../../components/TicketTable';
+import SubAdminTable from '../../../components/SubAdminTable';
 import { User, Ticket } from '../../../types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faTicketAlt, faSignOutAlt, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faTicketAlt, faSignOutAlt, faChevronLeft, faUserShield } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 
 export default function ManageDashboard() {
@@ -28,7 +29,7 @@ export default function ManageDashboard() {
     const [loggedInAdmin, setLoggedInAdmin] = useState<string | null>(null);
     const [users, setFilteredUsers] = useState<User[]>([]);
     const [tickets, setFilteredTickets] = useState<Ticket[]>([]);
-    const [activeTab, setActiveTab] = useState<'transfers' | 'tickets'>('transfers');
+    const [activeTab, setActiveTab] = useState<'transfers' | 'tickets' | 'customers'>('transfers');
     const [isSessionValid, setIsSessionValid] = useState<boolean | null>(null);
 
     useEffect(() => {
@@ -124,6 +125,15 @@ export default function ManageDashboard() {
                                 <FontAwesomeIcon icon={faTicketAlt} className="mr-2" />
                                 <span>Tickets</span>
                             </button>
+                            {admin?.role === 'OWNER' && (
+                                <button
+                                    onClick={() => setActiveTab('customers')}
+                                    className={`px-4 py-2 rounded-md flex items-center ${activeTab === 'customers' ? 'bg-[#89CF28] text-white shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
+                                >
+                                    <FontAwesomeIcon icon={faUserShield} className="mr-2" />
+                                    <span>Sub-Admins</span>
+                                </button>
+                            )}
                         </div>
                         <button
                             onClick={handleLogout}
@@ -134,11 +144,9 @@ export default function ManageDashboard() {
                         </button>
                     </div>
                 </div>
-                {activeTab === 'transfers' ? (
-                    <UserTable users={users} tickets={tickets} />
-                ) : (
-                    <TicketTable tickets={tickets} users={users} />
-                )}
+                {activeTab === 'transfers' && <UserTable users={users} tickets={tickets} />}
+                {activeTab === 'tickets' && <TicketTable tickets={tickets} users={users} />}
+                {activeTab === 'customers' && admin?.role === 'OWNER' && <SubAdminTable />}
             </div>
             <footer className="py-8 text-center text-gray-400 text-sm">
                 © {new Date().getFullYear()} Viagogo Management.

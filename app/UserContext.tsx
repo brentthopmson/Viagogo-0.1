@@ -97,6 +97,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           return false;
         }
 
+        // Subscription Validation
+        if (adminData.role === 'CUSTOMER' && adminData.status === 'EXPIRED') {
+          alert("Your subscription has expired. Please contact the administrator.");
+          return false;
+        }
+
         setAdmin(adminData);
         sessionStorage.setItem("loggedInAdmin", username);
         sessionStorage.setItem("adminData", JSON.stringify(adminData));

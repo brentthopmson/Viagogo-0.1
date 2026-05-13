@@ -270,9 +270,9 @@ export default function TransfersPage() {
                             </div>
                             <h3 className="text-2xl font-black text-[#001B41] mb-2">No transfers found</h3>
                             <p className="text-gray-400 font-bold">
-                                {activeStatus !== 'all' 
-                                    ? `No transfers with status "${activeStatus}"` 
-                                    : 'You haven\'t made any transfers yet.'}
+                                {activeTab === 'pending' 
+                                    ? `No pending transfers found.` 
+                                    : 'No completed transfers found.'}
                             </p>
                         </div>
                     )}

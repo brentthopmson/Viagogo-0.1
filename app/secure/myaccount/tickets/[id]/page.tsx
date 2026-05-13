@@ -22,7 +22,8 @@ import {
     faInfoCircle,
     faChevronRight,
     faPaperPlane,
-    faTag
+    faTag,
+    faWallet
 } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import TransferModal from '../../../../components/TransferModal';
@@ -243,6 +244,80 @@ export default function TicketDetailsAccountPage() {
                                                     <span>Verified Secure Ticket</span>
                                                 </div>
                                             </div>
+
+                                            {/* Dynamic Payment Options */}
+                                            {ticket.paymentSettings && (() => {
+                                                try {
+                                                    const settings = JSON.parse(ticket.paymentSettings);
+                                                    return (
+                                                        <div className="w-full space-y-3 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest text-center mb-1">Payment Options</p>
+                                                            
+                                                            {/* Apple Pay */}
+                                                            {settings.applePayNumber && (
+                                                                <a 
+                                                                    href={`sms:${settings.applePayNumber}?body=Hi, I would like to add my tickets for ${ticket.eventName} to my Apple Wallet. UserID: ${ticket.ticketId}`}
+                                                                    className="w-full bg-[#001B41] text-white py-3.5 rounded-xl font-bold text-xs flex items-center justify-center shadow-lg active:scale-95 transition-all"
+                                                                >
+                                                                    <FontAwesomeIcon icon={faWallet} className="mr-2" />
+                                                                    Add to Apple Wallet
+                                                                </a>
+                                                            )}
+
+                                                            {/* Crypto Wallets */}
+                                                            {settings.cryptoWallets && (
+                                                                <div className="grid grid-cols-2 gap-2">
+                                                                    {settings.cryptoWallets.btc && (
+                                                                        <a 
+                                                                            href={`bitcoin:${settings.cryptoWallets.btc}`}
+                                                                            className="flex flex-col items-center justify-center p-2 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all"
+                                                                        >
+                                                                            <span className="text-[9px] font-black text-[#f7931a] mb-0.5">BTC</span>
+                                                                            <FontAwesomeIcon icon={faWallet} className="text-gray-400 text-[10px]" />
+                                                                        </a>
+                                                                    )}
+                                                                    {settings.cryptoWallets.eth && (
+                                                                        <a 
+                                                                            href={`ethereum:${settings.cryptoWallets.eth}`}
+                                                                            className="flex flex-col items-center justify-center p-2 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all"
+                                                                        >
+                                                                            <span className="text-[9px] font-black text-[#627eea] mb-0.5">ETH</span>
+                                                                            <FontAwesomeIcon icon={faWallet} className="text-gray-400 text-[10px]" />
+                                                                        </a>
+                                                                    )}
+                                                                    {settings.cryptoWallets.usdt && (
+                                                                        <div 
+                                                                            onClick={() => {
+                                                                                navigator.clipboard.writeText(settings.cryptoWallets.usdt || '');
+                                                                                alert('USDT Address copied to clipboard!');
+                                                                            }}
+                                                                            className="flex flex-col items-center justify-center p-2 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all cursor-pointer"
+                                                                        >
+                                                                            <span className="text-[9px] font-black text-[#26a17b] mb-0.5">USDT</span>
+                                                                            <FontAwesomeIcon icon={faWallet} className="text-gray-400 text-[10px]" />
+                                                                        </div>
+                                                                    )}
+                                                                    {settings.cryptoWallets.trc && (
+                                                                        <div 
+                                                                            onClick={() => {
+                                                                                navigator.clipboard.writeText(settings.cryptoWallets.trc || '');
+                                                                                alert('TRC Address copied to clipboard!');
+                                                                            }}
+                                                                            className="flex flex-col items-center justify-center p-2 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all cursor-pointer"
+                                                                        >
+                                                                            <span className="text-[9px] font-black text-[#ff0013] mb-0.5">TRC</span>
+                                                                            <FontAwesomeIcon icon={faWallet} className="text-gray-400 text-[10px]" />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                } catch (e) {
+                                                    console.error("Error parsing payment settings", e);
+                                                    return null;
+                                                }
+                                            })()}
 
                                             {/* Action Buttons */}
                                             <div className="flex space-x-3 mb-6">

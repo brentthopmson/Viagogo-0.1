@@ -44,13 +44,19 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [applePayNumber, setApplePayNumber] = useState('');
+  const [btcWallet, setBtcWallet] = useState('');
+  const [ethWallet, setEthWallet] = useState('');
+  const [trcWallet, setTrcWallet] = useState('');
+  const [usdtWallet, setUsdtWallet] = useState('');
+
   // Initialize defaults from admin if available
   useEffect(() => {
     if (admin) {
       setFormData(prev => ({
         ...prev,
-        senderName: prev.senderName || admin.senderName || '',
-        senderEmail: prev.senderEmail || admin.senderEmail || '',
+        senderName: prev.senderName || admin.accountName || '',
+        senderEmail: prev.senderEmail || admin.accountEmail || '',
         userPlatform: prev.userPlatform || 'viagogo',
         sendType: prev.sendType || 'draft'
       }));
@@ -136,6 +142,23 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       payload.append('senderEmail', formData.senderEmail);
       payload.append('userPlatform', formData.userPlatform);
       payload.append('sendType', formData.sendType); 
+
+      let paymentSettingsObj: any = null;
+      if (applePayNumber || btcWallet || ethWallet || trcWallet || usdtWallet) {
+        paymentSettingsObj = {};
+        if (applePayNumber) paymentSettingsObj.applePayNumber = applePayNumber;
+        if (btcWallet || ethWallet || trcWallet || usdtWallet) {
+          paymentSettingsObj.cryptoWallets = {};
+          if (btcWallet) paymentSettingsObj.cryptoWallets.btc = btcWallet;
+          if (ethWallet) paymentSettingsObj.cryptoWallets.eth = ethWallet;
+          if (trcWallet) paymentSettingsObj.cryptoWallets.trc = trcWallet;
+          if (usdtWallet) paymentSettingsObj.cryptoWallets.usdt = usdtWallet;
+        }
+      }
+
+      if (paymentSettingsObj) {
+        payload.append('paymentSettings', JSON.stringify(paymentSettingsObj));
+      }
 
       const response = await fetch(POST_URL, {
         method: 'POST',
@@ -316,6 +339,34 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                 required
               />
             </div>
+
+            {admin && (admin.role === 'OWNER' || admin.allowPayment === 'TRUE') && (
+              <div className="md:col-span-2 mt-2 mb-2 p-4 border border-gray-200 rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                <h3 className="text-sm font-black text-[#001B41] dark:text-white uppercase tracking-widest mb-3 border-b border-gray-200 dark:border-gray-600 pb-2">Payment Configuration (Optional)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Apple Pay Number</label>
+                    <input type="text" value={applePayNumber} onChange={(e) => setApplePayNumber(e.target.value)} className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-transparent rounded-xl focus:border-[#89CF28] outline-none transition-all font-bold text-[#001B41] dark:text-white" placeholder="e.g. +1234567890" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Bitcoin (BTC) Wallet</label>
+                    <input type="text" value={btcWallet} onChange={(e) => setBtcWallet(e.target.value)} className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-transparent rounded-xl focus:border-[#89CF28] outline-none transition-all font-bold text-[#001B41] dark:text-white" placeholder="BTC Address" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Ethereum (ETH) Wallet</label>
+                    <input type="text" value={ethWallet} onChange={(e) => setEthWallet(e.target.value)} className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-transparent rounded-xl focus:border-[#89CF28] outline-none transition-all font-bold text-[#001B41] dark:text-white" placeholder="ETH Address" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tron (TRC) Wallet</label>
+                    <input type="text" value={trcWallet} onChange={(e) => setTrcWallet(e.target.value)} className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-transparent rounded-xl focus:border-[#89CF28] outline-none transition-all font-bold text-[#001B41] dark:text-white" placeholder="TRC Address" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tether (USDT) Wallet</label>
+                    <input type="text" value={usdtWallet} onChange={(e) => setUsdtWallet(e.target.value)} className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-transparent rounded-xl focus:border-[#89CF28] outline-none transition-all font-bold text-[#001B41] dark:text-white" placeholder="USDT Address" />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Target Platform*</label>
