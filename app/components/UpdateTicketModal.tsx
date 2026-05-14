@@ -33,9 +33,12 @@ const UpdateTicketModal: React.FC<UpdateTicketModalProps> = ({ ticket, onClose }
       payload.append("action", "updateTicket");
       payload.append("ticketId", ticket.ticketId);
       
-      // Add all form fields to payload
+      // Fields to exclude - these are auto-populated by spreadsheet formulas
+      const autoPopulatedFields = ['sn', 'ticketId', 'eventStatus', 'ticketStatus'];
+      
+      // Add all form fields to payload (excluding auto-populated fields)
       Object.entries(formData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null && !autoPopulatedFields.includes(key)) {
           payload.append(key, value.toString());
         }
       });

@@ -68,7 +68,7 @@ export default function ManageDashboard() {
     
     useEffect(() => {
         if (isSessionValid === false) {
-            router.replace('/admin');
+            router.replace('/secure/login');
         }
     }, [isSessionValid, router]);
     
@@ -90,7 +90,7 @@ export default function ManageDashboard() {
         setUsers([]);
         setTickets([]);
         setIsSessionValid(false);
-        router.push('/admin');
+        router.push('/secure/login');
     };
 
     if (isSessionValid === false || loggedInAdmin === null || admin === null) {

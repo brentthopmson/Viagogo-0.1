@@ -88,7 +88,7 @@ export default function TicketDetailsAccountPage() {
 
     const sidebarItems = [
         { icon: faTicketAlt, label: 'My Purchases', active: true },
-        { icon: faUserCircle, label: 'Personal Details', active: false },
+        { icon: faUserCircle, label: 'Personal Details', active: false, href: '/secure/myaccount/personal-details' },
         { icon: faCog, label: 'Account Settings', active: false },
         { icon: faShieldAlt, label: 'Privacy', active: false },
         { icon: faQuestionCircle, label: 'Help', active: false },
