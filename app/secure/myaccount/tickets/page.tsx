@@ -20,6 +20,7 @@ import {
     faExchangeAlt
 } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import Sidebar from '../../../components/Sidebar';
 
 export default function MyTicketsPage() {
     const router = useRouter();
@@ -151,47 +152,12 @@ export default function MyTicketsPage() {
             </header>
 
             <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row py-8 px-4 gap-8">
-                {/* Sidebar */}
-                <aside className={`
-                    fixed inset-0 bg-white z-40 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:bg-transparent lg:inset-auto lg:w-64
-                    ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                `}>
-                    <div className="p-6 lg:p-0">
-                        <div className="lg:hidden flex justify-end mb-8">
-                            <button onClick={() => setIsSidebarOpen(false)} className="text-2xl text-[#001B41]">
-                                <FontAwesomeIcon icon={faTimes} />
-                            </button>
-                        </div>
-                        <nav className="space-y-1">
-                            {sidebarItems.map((item, i) => (
-                                item.href && item.href !== '#' ? (
-                                    <Link key={i} href={item.href}
-                                        className={`w-full text-left px-4 py-3 rounded-[12px] flex items-center space-x-3 transition-all ${item.active ? 'bg-[#89CF28] text-white font-black shadow-lg shadow-[#89CF28]/20' : 'text-[#001B41] hover:bg-white hover:shadow-sm font-bold'}`}>
-                                        <FontAwesomeIcon icon={item.icon} className="w-5" />
-                                        <span>{item.label}</span>
-                                    </Link>
-                                ) : (
-                                    <button key={i} onClick={(item as any).action}
-                                        className={`w-full text-left px-4 py-3 rounded-[12px] flex items-center space-x-3 transition-all ${item.active ? 'bg-[#89CF28] text-white font-black shadow-lg shadow-[#89CF28]/20' : ((item as any).label === 'Sign Out' ? 'text-red-600 hover:bg-red-50' : 'text-[#001B41] hover:bg-white hover:shadow-sm font-bold')}`}>
-                                        <FontAwesomeIcon icon={item.icon} className="w-5" />
-                                        <span>{item.label}</span>
-                                    </button>
-                                )
-                            ))}
-                        </nav>
-
-                        {/* Management Link */}
-                        <div className="mt-12 pt-8 border-t border-gray-100">
-                            <Link 
-                                href="/secure/myaccount/manage" 
-                                className="flex items-center space-x-3 text-gray-400 hover:text-[#89CF28] transition-colors text-[10px] font-black uppercase tracking-widest"
-                            >
-                                <FontAwesomeIcon icon={faLock} className="w-4" />
-                                <span>Admin Panel</span>
-                            </Link>
-                        </div>
-                    </div>
-                </aside>
+                <Sidebar
+                    sidebarItems={sidebarItems}
+                    isSidebarOpen={isSidebarOpen}
+                    onClose={() => setIsSidebarOpen(false)}
+                    adminUsername={admin?.username}
+                />
 
                 {/* Main Content */}
                 <main className="flex-1">

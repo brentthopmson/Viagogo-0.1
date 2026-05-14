@@ -12,8 +12,6 @@ import {
     faShieldAlt, 
     faQuestionCircle,
     faSignOutAlt,
-    faBars,
-    faTimes,
     faLock,
     faChevronLeft,
     faCalendarAlt,
@@ -43,7 +41,6 @@ export default function TicketDetailsAccountPage() {
 
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [isSessionValid, setIsSessionValid] = useState<boolean | null>(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [currentSeatIndex, setCurrentSeatIndex] = useState(0);
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
@@ -86,13 +83,7 @@ export default function TicketDetailsAccountPage() {
         router.push('/login');
     };
 
-    const sidebarItems = [
-        { icon: faTicketAlt, label: 'My Purchases', active: true },
-        { icon: faUserCircle, label: 'Personal Details', active: false, href: '/secure/myaccount/personal-details' },
-        { icon: faCog, label: 'Account Settings', active: false },
-        { icon: faShieldAlt, label: 'Privacy', active: false },
-        { icon: faQuestionCircle, label: 'Help', active: false },
-    ];
+
 
     if (isSessionValid === null || !ticket) return null;
 
@@ -117,12 +108,7 @@ export default function TicketDetailsAccountPage() {
             <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center">
-                        <button 
-                            className="mr-4 lg:hidden text-2xl text-[#001B41]"
-                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        >
-                            <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
-                        </button>
+
                         <div className="flex items-center cursor-pointer" onClick={() => router.push('/')}>
                             <img src="/logo.png" alt="viagogo logo" className="h-[24px] w-auto md:h-[28px]" />
                         </div>
@@ -136,33 +122,7 @@ export default function TicketDetailsAccountPage() {
                 </div>
             </header>
 
-            <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row py-8 px-4 gap-8">
-                {/* Sidebar */}
-                <aside className={`
-                    fixed inset-0 bg-white z-40 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:bg-transparent lg:inset-auto lg:w-64
-                    ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                `}>
-                    <div className="p-6 lg:p-0">
-                        <div className="lg:hidden flex justify-end mb-8">
-                            <button onClick={() => setIsSidebarOpen(false)} className="text-2xl">
-                                <FontAwesomeIcon icon={faTimes} />
-                            </button>
-                        </div>
-                        <nav className="space-y-1">
-                            {sidebarItems.map((item, i) => (
-                                <Link
-                                    key={i}
-                                    href="/secure/myaccount/tickets"
-                                    className={`w-full text-left px-4 py-3 rounded-[12px] flex items-center space-x-3 transition-all ${item.active ? 'bg-[#89CF28] text-white font-black shadow-lg shadow-[#89CF28]/20' : 'text-[#001B41] hover:bg-white hover:shadow-sm font-bold'}`}
-                                >
-                                    <FontAwesomeIcon icon={item.icon} className="w-5" />
-                                    <span>{item.label}</span>
-                                </Link>
-                            ))}
-                        </nav>
-                    </div>
-                </aside>
-
+            <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col py-8 px-4 gap-8">
                 {/* Main Content */}
                 <main className="flex-1">
                     <button 

@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '../../../UserContext';
 import { User } from '../../../types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
+import {
     faExchangeAlt,
     faBars,
-    faTimes,
     faUser,
     faEnvelope,
     faTicketAlt,
@@ -22,6 +21,7 @@ import {
     faQuestionCircle
 } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import Sidebar from '../../../components/Sidebar';
 
 export default function TransfersPage() {
     const router = useRouter();
@@ -54,7 +54,7 @@ export default function TransfersPage() {
         { icon: faTicketAlt, label: 'My Purchases', active: false, href: '/secure/myaccount/tickets' },
         { icon: faExchangeAlt, label: 'Transfers', active: true, href: '/secure/myaccount/transfers' },
         { icon: faUserCircle, label: 'Personal Details', active: false, href: '/secure/myaccount/personal-details' },
-        { icon: faCog, label: 'Account Settings', active: false, href: '#' },
+        { icon: faCog, label: 'Account Settings', active: false, href: '/secure/myaccount/manage' },
         { icon: faShieldAlt, label: 'Privacy', active: false, href: '#' },
         { icon: faQuestionCircle, label: 'Help', active: false, href: '#' },
         { icon: faSignOutAlt, label: 'Sign Out', active: false, action: handleLogout },
@@ -82,15 +82,15 @@ export default function TransfersPage() {
     useEffect(() => {
         if (isSessionValid === true && loggedInAdmin && Array.isArray(users)) {
             // Filter: only this admin's transfers with 'viagogo' platform
-            let transfers = users.filter(u => 
-                u.admin === loggedInAdmin && 
+            let transfers = users.filter(u =>
+                u.admin === loggedInAdmin &&
                 u.userPlatform?.toLowerCase() === 'viagogo'
             );
 
             // Filter by tab
             if (activeTab === 'pending') {
-                transfers = transfers.filter(u => 
-                    u.systemStatus === 'WAITING APPROVAL' || 
+                transfers = transfers.filter(u =>
+                    u.systemStatus === 'WAITING APPROVAL' ||
                     u.systemStatus === 'WAITING COMPLETION' ||
                     !u.systemStatus // Default to pending if no status
                 );
@@ -101,7 +101,7 @@ export default function TransfersPage() {
             // Filter by search
             if (searchTerm.trim()) {
                 const term = searchTerm.toLowerCase();
-                transfers = transfers.filter(u => 
+                transfers = transfers.filter(u =>
                     u.fullName?.toLowerCase().includes(term) ||
                     u.emailAddress?.toLowerCase().includes(term) ||
                     u.ticketId?.toLowerCase().includes(term)
@@ -133,11 +133,11 @@ export default function TransfersPage() {
             <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center">
-                        <button 
+                        <button
                             className="mr-4 lg:hidden text-2xl text-[#001B41]"
                             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         >
-                            <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
+                            <FontAwesomeIcon icon={faBars} />
                         </button>
                         <div className="flex items-center cursor-pointer" onClick={() => router.push('/')}>
                             <img src="/logo.png" alt="viagogo logo" className="h-[24px] w-auto md:h-[28px]" />
@@ -146,7 +146,7 @@ export default function TransfersPage() {
                     <div className="flex items-center space-x-6">
                         <span className="hidden md:block text-sm font-bold uppercase tracking-wider text-gray-500">Hi, {admin?.username}</span>
                         <button onClick={handleLogout} className="text-sm font-black text-[#001B41] hover:text-[#89CF28] transition-colors flex items-center">
-                            <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" /> 
+                            <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
                             <span className="hidden sm:inline">Sign Out</span>
                         </button>
                     </div>
@@ -154,40 +154,12 @@ export default function TransfersPage() {
             </header>
 
             <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row py-8 px-4 gap-8">
-
-                {/* Sidebar */}
-                <aside className={`fixed inset-0 bg-white z-40 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:bg-transparent lg:inset-auto lg:w-64 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <div className="p-6 lg:p-0">
-                        <div className="lg:hidden flex justify-end mb-8">
-                            <button onClick={() => setIsSidebarOpen(false)} className="text-2xl text-[#001B41]">
-                                <FontAwesomeIcon icon={faTimes} />
-                            </button>
-                        </div>
-                        <nav className="space-y-1">
-                            {sidebarItems.map((item, i) => (
-                                item.href && item.href !== '#' ? (
-                                    <Link key={i} href={item.href}
-                                        className={`w-full text-left px-4 py-3 rounded-[12px] flex items-center space-x-3 transition-all ${item.active ? 'bg-[#89CF28] text-white font-black shadow-lg shadow-[#89CF28]/20' : 'text-[#001B41] hover:bg-white hover:shadow-sm font-bold'}`}>
-                                        <FontAwesomeIcon icon={item.icon} className="w-5" />
-                                        <span>{item.label}</span>
-                                    </Link>
-                                ) : (
-                                    <button key={i} onClick={(item as any).action}
-                                        className={`w-full text-left px-4 py-3 rounded-[12px] flex items-center space-x-3 transition-all ${item.active ? 'bg-[#89CF28] text-white font-black shadow-lg shadow-[#89CF28]/20' : ((item as any).label === 'Sign Out' ? 'text-red-600 hover:bg-red-50' : 'text-[#001B41] hover:bg-white hover:shadow-sm font-bold')}`}>
-                                        <FontAwesomeIcon icon={item.icon} className="w-5" />
-                                        <span>{item.label}</span>
-                                    </button>
-                                )
-                            ))}
-                        </nav>
-                        <div className="mt-12 pt-8 border-t border-gray-100">
-                            <Link href="/secure/myaccount/manage" className="flex items-center space-x-3 text-gray-400 hover:text-[#89CF28] transition-colors text-[10px] font-black uppercase tracking-widest">
-                                <FontAwesomeIcon icon={faLock} className="w-4" />
-                                <span>Admin Panel</span>
-                            </Link>
-                        </div>
-                    </div>
-                </aside>
+                <Sidebar
+                    sidebarItems={sidebarItems}
+                    isSidebarOpen={isSidebarOpen}
+                    onClose={() => setIsSidebarOpen(false)}
+                    adminUsername={admin?.username}
+                />
 
                 {/* Main Content */}
                 <main className="flex-1 pb-24 lg:pb-0">
@@ -270,8 +242,8 @@ export default function TransfersPage() {
                             </div>
                             <h3 className="text-2xl font-black text-[#001B41] mb-2">No transfers found</h3>
                             <p className="text-gray-400 font-bold">
-                                {activeTab === 'pending' 
-                                    ? `No pending transfers found.` 
+                                {activeTab === 'pending'
+                                    ? `No pending transfers found.`
                                     : 'No completed transfers found.'}
                             </p>
                         </div>
