@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useRef, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { User, Ticket, Admin } from './types';
 
@@ -60,7 +60,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
     const initialLoad = useRef(true);
 
-    const fetchWithRetry = async (url: string, retries = 3) => {
+    const fetchWithRetry = useCallback(async (url: string, retries = 3) => {
       let attempt = 0;
       while (attempt < retries) {
           try {
@@ -78,9 +78,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
               }
           }
       }
-  };
+    }, []);
 
-  const fetchAdminData = async (username: string, password: string): Promise<boolean> => {
+  const fetchAdminData = useCallback(async (username: string, password: string): Promise<boolean> => {
     try {
       //setLoading(true);
       const data: Admin[] = await fetchWithRetry(APP_SCRIPT_ADMIN_URL);
@@ -104,13 +104,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
 
         setAdmin(adminData);
-        sessionStorage.setItem("loggedInAdmin", username);
-        sessionStorage.setItem("adminData", JSON.stringify(adminData));
+        localStorage.setItem("loggedInAdmin", username);
+        localStorage.setItem("adminData", JSON.stringify(adminData));
         return true;
       } else {
         alert("Invalid admin credentials!");
-        sessionStorage.removeItem("loggedInAdmin");
-        sessionStorage.removeItem("adminData");
+        localStorage.removeItem("loggedInAdmin");
+        localStorage.removeItem("adminData");
         setAdmin(null);
         return false;
       }
@@ -120,10 +120,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       //setLoading(false);
     }
-  };
+  }, [fetchWithRetry]);
 
 
-    const fetchUserData = async (id: string): Promise<User | null> => { // Corrected implementation
+    const fetchUserData = useCallback(async (id: string): Promise<User | null> => { // Corrected implementation
         try {
             const data: User[] = await fetchWithRetry(APP_SCRIPT_USER_URL);
             const userData = data.find((row: User) => row.userId === id);
@@ -141,13 +141,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         } finally {
             //setLoading(false);
         }
-    };
+    }, [router, fetchWithRetry]);
 
-  const fetchAllUsers = async () => {
+  const fetchAllUsers = useCallback(async () => {
     try {
       //setLoading(true);
       const data: User[] = await fetchWithRetry(APP_SCRIPT_USER_URL);
-      const adminUsername = sessionStorage.getItem("loggedInAdmin");
+      const adminUsername = localStorage.getItem("loggedInAdmin");
       const filteredData = adminUsername ? data.filter(u => u.admin === adminUsername) : data;
       setUsers(filteredData);
       localStorage.setItem('allUsersData', JSON.stringify(data));
@@ -156,9 +156,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       //setLoading(false);
     }
-  };
+  }, [fetchWithRetry]);
 
-  const fetchTicketData = async (ticketId: string) => {
+  const fetchTicketData = useCallback(async (ticketId: string) => {
     try {
       //setLoading(true);
       const data: Ticket[] = await fetchWithRetry(APP_SCRIPT_TICKET_URL);
@@ -172,13 +172,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       //setLoading(false);
     }
-  };
+  }, [fetchWithRetry]);
 
-  const fetchAllTickets = async () => {
+  const fetchAllTickets = useCallback(async () => {
     try {
       //setLoading(true);
       const data: Ticket[] = await fetchWithRetry(APP_SCRIPT_TICKET_URL);
-      const adminUsername = sessionStorage.getItem("loggedInAdmin");
+      const adminUsername = localStorage.getItem("loggedInAdmin");
       const filteredData = adminUsername ? data.filter(t => t.admin === adminUsername) : data;
       setTickets(filteredData);
       localStorage.setItem('allTicketsData', JSON.stringify(data));
@@ -187,7 +187,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       //setLoading(false);
     }
-  };
+  }, [fetchWithRetry]);
 
   const refreshData = () => {
       initialLoad.current = true;
@@ -215,7 +215,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           if (cachedAllUsersData) {
               try {
                   const usersData = JSON.parse(cachedAllUsersData);
-                  const adminUsername = sessionStorage.getItem("loggedInAdmin");
+                  const adminUsername = localStorage.getItem("loggedInAdmin");
                   const filteredData = adminUsername ? usersData.filter((u: User) => u.admin === adminUsername) : usersData;
                   setUsers(filteredData);
               } catch (e) {
@@ -230,7 +230,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           if (cachedAllTicketsData) {
               try {
                   const ticketsData = JSON.parse(cachedAllTicketsData);
-                  const adminUsername = sessionStorage.getItem("loggedInAdmin");
+                  const adminUsername = localStorage.getItem("loggedInAdmin");
                   const filteredData = adminUsername ? ticketsData.filter((t: Ticket) => t.admin === adminUsername) : ticketsData;
                   setTickets(filteredData);
               } catch (e) {
@@ -247,49 +247,67 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           localStorage.removeItem('ticketData');
           setTicket(null);
       }
-  }, [searchParams, router, user]);
+  }, [searchParams, router, fetchUserData, fetchAllUsers, fetchAllTickets, fetchTicketData]);
 
   // Add this to your useEffect in UserContext.tsx
   useEffect(() => {
     // Check for stored admin data
-    const loggedInAdminUsername = sessionStorage.getItem("loggedInAdmin");
-    const storedAdminData = sessionStorage.getItem("adminData");
+    const loggedInAdminUsername = localStorage.getItem("loggedInAdmin");
+    const storedAdminData = localStorage.getItem("adminData");
     
     if (storedAdminData) {
       try {
         setAdmin(JSON.parse(storedAdminData));
       } catch (e) {
         console.error("Error parsing stored admin data", e);
-        sessionStorage.removeItem("adminData");
+        localStorage.removeItem("adminData");
       }
     } else if (loggedInAdminUsername) {
       // If we only have the username but not the full data, try to fetch it
       fetchAdminData(loggedInAdminUsername, ""); // Password will be ignored in this case
     }
-  }, []);
+  }, [fetchAdminData]);
+
+  const value = useMemo(() => ({
+    user,
+    users,
+    ticket,
+    tickets,
+    admin,
+    loading,
+    setUser,
+    setUsers,
+    setTicket,
+    setTickets,
+    setAdmin,
+    setLoggedInAdmin,
+    setLoading,
+    fetchAllUsers,
+    fetchAllTickets,
+    fetchAdminData,
+    fetchUserData,
+  }), [
+    user,
+    users,
+    ticket,
+    tickets,
+    admin,
+    loading,
+    setUser,
+    setUsers,
+    setTicket,
+    setTickets,
+    setAdmin,
+    setLoggedInAdmin,
+    setLoading,
+    fetchAllUsers,
+    fetchAllTickets,
+    fetchAdminData,
+    fetchUserData,
+  ]);
 
   return (
-      <UserContext.Provider
-          value={{
-              user,
-              users,
-              ticket,
-              tickets,
-              admin,
-              loading,
-              setUser,
-              setUsers,
-              setTicket,
-              setTickets,
-              setAdmin,
-              setLoggedInAdmin,
-              setLoading,
-              fetchAllUsers,
-              fetchAllTickets,
-              fetchAdminData,
-              fetchUserData,
-      }}
-    >
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );

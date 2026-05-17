@@ -33,8 +33,8 @@ export default function ManageDashboard() {
     const [isSessionValid, setIsSessionValid] = useState<boolean | null>(null);
 
     useEffect(() => {
-        const adminUsername = sessionStorage.getItem("loggedInAdmin");
-        const adminData = sessionStorage.getItem('adminData');
+        const adminUsername = localStorage.getItem("loggedInAdmin");
+        const adminData = localStorage.getItem('adminData');
     
         if (adminUsername && adminData) {
             try {
@@ -46,8 +46,8 @@ export default function ManageDashboard() {
                 fetchAllTickets();
             } catch (e) {
                 console.error("Error parsing admin data", e);
-                sessionStorage.removeItem('adminData');
-                sessionStorage.removeItem('loggedInAdmin');
+                localStorage.removeItem('adminData');
+                localStorage.removeItem('loggedInAdmin');
                 setAdmin(null);
                 setLoggedInAdmin(null);
                 setIsSessionValid(false);
@@ -82,8 +82,8 @@ export default function ManageDashboard() {
     }, [allTickets, loggedInAdmin, isSessionValid]);
 
     const handleLogout = () => {
-        sessionStorage.removeItem("loggedInAdmin");
-        sessionStorage.removeItem("adminData");
+        localStorage.removeItem("loggedInAdmin");
+        localStorage.removeItem("adminData");
         setLoggedInAdmin(null);
         setAdmin(null);
         setLoading(false);

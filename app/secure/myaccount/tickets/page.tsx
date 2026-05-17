@@ -42,8 +42,8 @@ export default function MyTicketsPage() {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        const adminUsername = sessionStorage.getItem("loggedInAdmin");
-        const adminData = sessionStorage.getItem('adminData');
+        const adminUsername = localStorage.getItem("loggedInAdmin");
+        const adminData = localStorage.getItem('adminData');
     
         if (adminUsername && adminData) {
             try {
@@ -51,7 +51,9 @@ export default function MyTicketsPage() {
                 setAdmin(parsedAdminData);
                 setLoggedInAdmin(adminUsername);
                 setIsSessionValid(true);
-                fetchAllTickets();
+                if (allTickets.length === 0) {
+                    fetchAllTickets();
+                }
             } catch (e) {
                 console.error("Error parsing admin data", e);
                 router.replace('/login');
@@ -105,8 +107,8 @@ export default function MyTicketsPage() {
     }, [allTickets, loggedInAdmin, isSessionValid, activeTab, searchTerm]);
 
     const handleLogout = () => {
-        sessionStorage.removeItem("loggedInAdmin");
-        sessionStorage.removeItem("adminData");
+        localStorage.removeItem("loggedInAdmin");
+        localStorage.removeItem("adminData");
         setAdmin(null);
         setUsers([]);
         setTickets([]);
@@ -116,8 +118,8 @@ export default function MyTicketsPage() {
     const sidebarItems = [
         { icon: faTicketAlt, label: 'My Purchases', active: true, href: '/secure/myaccount/tickets' },
         { icon: faExchangeAlt, label: 'Transfers', active: false, href: '/secure/myaccount/transfers' },
-        { icon: faUserCircle, label: 'Personal Details', active: false, href: '#' },
-        { icon: faCog, label: 'Account Settings', active: false, href: '#' },
+        { icon: faUserCircle, label: 'Personal Details', active: false, href: '/secure/myaccount/personal-details' },
+        { icon: faCog, label: 'Account Settings', active: false, href: '/secure/myaccount/manage' },
         { icon: faShieldAlt, label: 'Privacy', active: false, href: '#' },
         { icon: faQuestionCircle, label: 'Help', active: false, href: '#' },
         { icon: faSignOutAlt, label: 'Sign Out', active: false, action: handleLogout },
@@ -128,7 +130,7 @@ export default function MyTicketsPage() {
     return (
         <div className="min-h-screen bg-[#f4f7f9] flex flex-col font-sans">
             {/* Header - White Background as requested */}
-            <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 sticky top-0 z-50">
+            <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 fixed top-0 left-0 right-0 z-50 w-full">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center">
                         <button 
@@ -137,9 +139,9 @@ export default function MyTicketsPage() {
                         >
                             <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
                         </button>
-                        <div className="flex items-center cursor-pointer" onClick={() => router.push('/')}>
+                        <Link href="/" className="flex items-center cursor-pointer">
                             <img src="/logo.png" alt="viagogo logo" className="h-[24px] w-auto md:h-[28px]" />
-                        </div>
+                        </Link>
                     </div>
                     <div className="flex items-center space-x-6">
                         <span className="hidden md:block text-sm font-bold uppercase tracking-wider text-gray-500">Hi, {admin?.username}</span>
@@ -151,7 +153,7 @@ export default function MyTicketsPage() {
                 </div>
             </header>
 
-            <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row py-8 px-4 gap-8">
+            <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row pt-[88px] lg:pt-[88px] pb-8 px-4 gap-8">
                 <Sidebar
                     sidebarItems={sidebarItems}
                     isSidebarOpen={isSidebarOpen}

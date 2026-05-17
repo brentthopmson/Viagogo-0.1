@@ -2,7 +2,7 @@
 
 # Configuration
 APP_DIR=$(pwd)
-PORT=3000
+PORT=3001
 
 echo "----------------------------------------"
 echo "Starting Viagogo Rebranded App..."

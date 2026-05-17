@@ -14,7 +14,7 @@ export const metadata = {
   description: 'Tickets for Concerts, Sport, Theatre at viagogo, an online ticket marketplace. Buy and Sell Tickets.',
   keywords: 'viagogo, buy tickets, sell tickets, concert, sport, theater',
   manifest: '/manifest.json',
-  viewport: 'width=device-width, initial-scale=1, format-detection=telephone=no',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover',
   icons: {
     icon: [
       { url: '/favicon.ico' },

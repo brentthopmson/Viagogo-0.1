@@ -8,6 +8,7 @@ import {
     faUserCircle,
     faSignOutAlt,
     faBars,
+    faTimes,
     faTicketAlt,
     faCog,
     faShieldAlt,
@@ -19,7 +20,7 @@ import {
     faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-import Sidebar from '../../../../components/Sidebar';
+import Sidebar from '../../../components/Sidebar';
 
 const APP_SCRIPT_POST_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbxcoCDXcWlKPDbttlFf2eR_EeuMkfupy5dfgIOklM1ShEZ30gfD3wzZZOxkKV4xIWEl/exec";
 
@@ -40,7 +41,7 @@ export default function PersonalDetailsPage() {
     });
 
     useEffect(() => {
-        const adminData = sessionStorage.getItem('adminData');
+        const adminData = localStorage.getItem('adminData');
         if (adminData) {
             try {
                 const parsed = JSON.parse(adminData);
@@ -106,7 +107,7 @@ export default function PersonalDetailsPage() {
                     adminSettings: finalAdminSettings
                 };
                 setAdmin(updatedAdmin);
-                sessionStorage.setItem("adminData", JSON.stringify(updatedAdmin));
+                localStorage.setItem("adminData", JSON.stringify(updatedAdmin));
                 setFormData(prev => ({ ...prev, adminSettings: finalAdminSettings }));
                 setMessage({ type: 'success', text: 'Personal details updated successfully!' });
                 setTimeout(() => setMessage(null), 3000);
@@ -123,8 +124,8 @@ export default function PersonalDetailsPage() {
     };
 
     const handleLogout = () => {
-        sessionStorage.removeItem("loggedInAdmin");
-        sessionStorage.removeItem("adminData");
+        localStorage.removeItem("loggedInAdmin");
+        localStorage.removeItem("adminData");
         setAdmin(null);
         router.push('/login');
     };
@@ -136,7 +137,6 @@ export default function PersonalDetailsPage() {
         { icon: faCog, label: 'Account Settings', active: false, href: '/secure/myaccount/manage' },
         { icon: faShieldAlt, label: 'Privacy', active: false, href: '#' },
         { icon: faQuestionCircle, label: 'Help', active: false, href: '#' },
-        { icon: faSignOutAlt, label: 'Sign Out', active: false, action: handleLogout },
     ];
 
     if (isSessionValid === null) return null;
@@ -144,14 +144,14 @@ export default function PersonalDetailsPage() {
     return (
         <div className="min-h-screen flex flex-col bg-white">
             {/* Fixed Header */}
-            <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 sticky top-0 z-50">
+            <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 fixed top-0 left-0 right-0 z-50 w-full">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center">
                         <button 
                             className="mr-4 lg:hidden text-2xl text-[#001B41]"
                             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         >
-                            <FontAwesomeIcon icon={isSidebarOpen ? faBars : faBars} />
+                            <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
                         </button>
                         <div className="flex items-center cursor-pointer" onClick={() => router.push('/')}>
                             <img src="/logo.png" alt="viagogo logo" className="h-[24px] w-auto md:h-[28px]" />
@@ -167,7 +167,7 @@ export default function PersonalDetailsPage() {
             </header>
 
             {/* Scrollable Content Area */}
-            <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row py-8 px-4 gap-8 overflow-y-auto">
+            <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row pt-[88px] lg:pt-[88px] pb-8 px-4 gap-8 overflow-y-auto">
                 <Sidebar
                     sidebarItems={sidebarItems}
                     isSidebarOpen={isSidebarOpen}
@@ -182,7 +182,7 @@ export default function PersonalDetailsPage() {
                         className="flex items-center text-[#001B41] font-black mb-8 hover:opacity-70 transition-opacity"
                     >
                         <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
-                        Back to My Purchases
+                        Back
                     </button>
 
                     <h1 className="text-3xl font-black text-[#001B41] mb-8">Personal Details</h1>

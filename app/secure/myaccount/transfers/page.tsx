@@ -39,11 +39,12 @@ export default function TransfersPage() {
     const [isSessionValid, setIsSessionValid] = useState<boolean | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'pending' | 'completed'>('pending');
+    const [activeLabel, setActiveLabel] = useState('Transfers');
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleLogout = () => {
-        sessionStorage.removeItem("loggedInAdmin");
-        sessionStorage.removeItem("adminData");
+        localStorage.removeItem("loggedInAdmin");
+        localStorage.removeItem("adminData");
         setAdmin(null);
         setUsers([]);
         setTickets([]);
@@ -61,8 +62,8 @@ export default function TransfersPage() {
     ];
 
     useEffect(() => {
-        const adminUsername = sessionStorage.getItem("loggedInAdmin");
-        const adminData = sessionStorage.getItem('adminData');
+        const adminUsername = localStorage.getItem("loggedInAdmin");
+        const adminData = localStorage.getItem('adminData');
         if (adminUsername && adminData) {
             try {
                 const parsedAdminData = JSON.parse(adminData);
@@ -130,7 +131,7 @@ export default function TransfersPage() {
         <div className="min-h-screen bg-[#f4f7f9] flex flex-col font-sans">
 
             {/* Header */}
-            <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 sticky top-0 z-50">
+            <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 fixed top-0 left-0 right-0 z-50 w-full">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center">
                         <button
@@ -153,7 +154,7 @@ export default function TransfersPage() {
                 </div>
             </header>
 
-            <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row py-8 px-4 gap-8">
+            <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row pt-[88px] lg:pt-[88px] pb-8 px-4 gap-8">
                 <Sidebar
                     sidebarItems={sidebarItems}
                     isSidebarOpen={isSidebarOpen}
@@ -220,13 +221,13 @@ export default function TransfersPage() {
                                                 </span>
                                             </div>
                                             <p className="text-[10px] font-bold text-gray-300 mt-2">
-                                                {new Date(transfer.timestamp).toLocaleDateString('en-US', { 
+                                                {transfer.timestamp ? new Date(transfer.timestamp).toLocaleDateString('en-US', { 
                                                     month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                                                })}
+                                                }) : 'N/A'}
                                             </p>
                                         </div>
                                         <div className="flex flex-col items-end space-y-3">
-                                            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap border ${getStatusColor(transfer.systemStatus)}`}>
+                                            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap border ${getStatusColor(transfer.systemStatus || '')}`}>
                                                 {transfer.systemStatus || 'UNKNOWN'}
                                             </span>
                                             <FontAwesomeIcon icon={faChevronRight} className="text-gray-200 text-xs mr-1" />

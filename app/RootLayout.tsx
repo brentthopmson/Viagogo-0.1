@@ -38,8 +38,8 @@ export default function RootLayoutWrapper({
   };
 
   const handleSignOut = () => {
-    sessionStorage.removeItem("loggedInAdmin");
-    sessionStorage.removeItem("adminData");
+    localStorage.removeItem("loggedInAdmin");
+    localStorage.removeItem("adminData");
     router.push('/login'); // Changed from window.location.href to router.push
   };
 

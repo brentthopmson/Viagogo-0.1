@@ -1,4 +1,5 @@
-// /components/AddTicketModal.tsx
+"use client";
+
 import { useState } from 'react';
 import { useUser } from '../UserContext';
 
@@ -20,6 +21,7 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
     section: '',
     sectionNo: '',
     row: '',
+    category: '',
     seatNumbers: '',
     platform: 'viagogo',
     ageRestriction: 'All Ages',
@@ -65,7 +67,7 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
     setError(null);
     
     try {
-      const admin = sessionStorage.getItem("loggedInAdmin");
+      const admin = localStorage.getItem("loggedInAdmin");
       if (!admin) {
         throw new Error("Admin session expired. Please log in again.");
       }
@@ -207,6 +209,17 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
                 className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#001B41]"
               />
             </div>
+
+            <div>
+              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Category</label>
+              <input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#001B41]"
+              />
+            </div>
             
             <div>
               <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Row*</label>
@@ -339,7 +352,6 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
             ></textarea>
           </div>
           
-          {/* Error Message is now just before the buttons */}
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {error}
