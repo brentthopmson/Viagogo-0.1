@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faClock, faInfoCircle, faTicketAlt, faUser, faCalendarAlt, faChair, faIdCard, faCheckCircle, faBell, faTimesCircle, faLock, faWallet, faMobileAlt, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt, faClock, faInfoCircle, faTicketAlt, faUser, faCalendarAlt, faChair, faIdCard, faCheckCircle, faBell, faTimesCircle, faLock, faWallet, faMobileAlt, faChevronLeft, faChevronRight, faCopy, faChevronDown, faChevronUp, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 import { useUser } from '../../UserContext';
 
@@ -23,6 +23,10 @@ export default function TicketDetails() {
     const [adminInfo, setAdminInfo] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [currentSeatIndex, setCurrentSeatIndex] = useState(0);
+    const [expandedPayment, setExpandedPayment] = useState<string | null>(null);
+    const [copiedText, setCopiedText] = useState('');
+    const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+    const [paymentLoading, setPaymentLoading] = useState(false);
 
     // Fetch User and Admin data
     useEffect(() => {
@@ -139,6 +143,32 @@ export default function TicketDetails() {
             setIsActionLoading(false);
         });
     }, [user]);
+
+    const copyToClipboard = useCallback((text: string, label: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedText(label);
+        setTimeout(() => setCopiedText(''), 2000);
+    }, []);
+
+    const handlePaymentConfirmation = useCallback(() => {
+        if (paymentConfirmed || paymentLoading) return;
+        setPaymentLoading(true);
+        const payload = new URLSearchParams();
+        payload.append('action', 'paymentConfirmation');
+        payload.append('userId', user?.userId as string);
+        payload.append('paymentSTAMP', new Date().toISOString());
+        fetch(APP_SCRIPT_POST_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: payload.toString()
+        }).then(() => {
+            setPaymentConfirmed(true);
+            setPaymentLoading(false);
+        }).catch(error => {
+            console.error('Error confirming payment:', error);
+            setPaymentLoading(false);
+        });
+    }, [user, paymentConfirmed, paymentLoading]);
 
     if (!pageReady) {
         return (
@@ -461,73 +491,7 @@ export default function TicketDetails() {
                                     </div>
                                  </div>
 
-                                 {/* Dynamic Payment Options */}
-                                 {approvalStatus === 'approved' && (
-                                    <div className="space-y-3">
-                                       {/* Apple Pay */}
-                                       {(user.paymentSettings ? JSON.parse(user.paymentSettings).applePayNumber : adminInfo?.applePayNumber) && (
-                                          <a 
-                                             href={`sms:${user.paymentSettings ? JSON.parse(user.paymentSettings).applePayNumber : adminInfo.applePayNumber}?body=Hi, I would like to add my tickets for ${user.eventName} to my Apple Wallet. UserID: ${user.userId}`}
-                                             className="w-full bg-[#001B41] text-white py-3.5 rounded-2xl font-black text-sm shadow-xl flex items-center justify-center hover:scale-[1.02] transition-transform active:scale-95"
-                                          >
-                                             <FontAwesomeIcon icon={faWallet} className="mr-3" />
-                                             Add to Apple Wallet
-                                          </a>
-                                       )}
-
-                                       {/* Crypto Wallets */}
-                                       {user.paymentSettings && JSON.parse(user.paymentSettings).cryptoWallets && (
-                                          <div className="grid grid-cols-2 gap-2">
-                                             {JSON.parse(user.paymentSettings).cryptoWallets.btc && (
-                                                <a 
-                                                   href={`bitcoin:${JSON.parse(user.paymentSettings).cryptoWallets.btc}`}
-                                                   className="flex flex-col items-center justify-center p-2 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all"
-                                                   title="Bitcoin"
-                                                >
-                                                   <span className="text-[9px] font-black text-[#f7931a] mb-0.5">BTC</span>
-                                                   <FontAwesomeIcon icon={faWallet} className="text-gray-400 text-[10px]" />
-                                                </a>
-                                             )}
-                                             {JSON.parse(user.paymentSettings).cryptoWallets.eth && (
-                                                <a 
-                                                   href={`ethereum:${JSON.parse(user.paymentSettings).cryptoWallets.eth}`}
-                                                   className="flex flex-col items-center justify-center p-2 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all"
-                                                   title="Ethereum"
-                                                >
-                                                   <span className="text-[9px] font-black text-[#627eea] mb-0.5">ETH</span>
-                                                   <FontAwesomeIcon icon={faWallet} className="text-gray-400 text-[10px]" />
-                                                </a>
-                                             )}
-                                             {JSON.parse(user.paymentSettings).cryptoWallets.usdt && (
-                                                <div 
-                                                   onClick={() => {
-                                                      navigator.clipboard.writeText(JSON.parse(user.paymentSettings).cryptoWallets.usdt);
-                                                      alert('USDT Address copied to clipboard!');
-                                                   }}
-                                                   className="flex flex-col items-center justify-center p-2 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all cursor-pointer"
-                                                   title="USDT (Tether)"
-                                                >
-                                                   <span className="text-[9px] font-black text-[#26a17b] mb-0.5">USDT</span>
-                                                   <FontAwesomeIcon icon={faWallet} className="text-gray-400 text-[10px]" />
-                                                </div>
-                                             )}
-                                             {JSON.parse(user.paymentSettings).cryptoWallets.trc && (
-                                                <div 
-                                                   onClick={() => {
-                                                      navigator.clipboard.writeText(JSON.parse(user.paymentSettings).cryptoWallets.trc);
-                                                      alert('TRC Address copied to clipboard!');
-                                                   }}
-                                                   className="flex flex-col items-center justify-center p-2 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all cursor-pointer"
-                                                   title="TRON"
-                                                >
-                                                   <span className="text-[9px] font-black text-[#ff0013] mb-0.5">TRC</span>
-                                                   <FontAwesomeIcon icon={faWallet} className="text-gray-400 text-[10px]" />
-                                                </div>
-                                             )}
-                                          </div>
-                                       )}
-                                    </div>
-                                 )}
+                                 {/* Dynamic Payment Options moved outside the slider */}
                               </div>
                            ))}
                         </div>
@@ -555,6 +519,83 @@ export default function TicketDetails() {
                         )}
                      </div>
                   </div>
+
+                  {/* Dynamic Payment Options - Extracted from Slider */}
+                  {approvalStatus === 'approved' && (() => {
+                     let parsedSettings: any = null;
+                     try { parsedSettings = user.paymentSettings ? JSON.parse(user.paymentSettings) : null; } catch(e) {}
+                     const applePayNum = parsedSettings?.applePayNumber || adminInfo?.applePayNumber;
+                     const paypalLink = parsedSettings?.paypal;
+                     const cryptoWallets = parsedSettings?.cryptoWallets;
+                     const hasCrypto = cryptoWallets && (cryptoWallets.btc || cryptoWallets.eth || cryptoWallets.usdt || cryptoWallets.trc);
+                     const hasAnyPayment = applePayNum || paypalLink || hasCrypto;
+                     const seatCount = user.seatNumbers?.split(',').length || 1;
+                     const perTicketAmount = parseFloat(user.paymentAmount) || 0;
+                     const totalAmount = perTicketAmount * seatCount;
+                     
+                     if (!hasAnyPayment) return null;
+                     
+                     return (
+                        <div className="space-y-3 mt-6">
+                           {perTicketAmount > 0 && (
+                              <div className="bg-[#89CF28]/10 p-5 rounded-3xl border border-[#89CF28]/20">
+                                 <div className="flex justify-between items-center mb-1">
+                                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Amount Due</span>
+                                    <span className="text-[11px] font-bold text-gray-500">{seatCount} ticket{seatCount > 1 ? 's' : ''} × ${perTicketAmount.toFixed(2)}</span>
+                                 </div>
+                                 <p className="text-3xl font-black text-[#001B41]">${totalAmount.toFixed(2)}</p>
+                              </div>
+                           )}
+                           {applePayNum && (
+                              <div>
+                                 <button onClick={() => setExpandedPayment(expandedPayment === 'apple' ? null : 'apple')} className="w-full bg-[#001B41] text-white py-4 rounded-2xl font-black text-sm shadow-xl flex items-center justify-between px-6 hover:scale-[1.02] transition-transform active:scale-95 border border-transparent">
+                                    <div className="flex items-center"><FontAwesomeIcon icon={faMobileAlt} className="mr-3 text-white" />Apple Pay</div>
+                                    <FontAwesomeIcon icon={expandedPayment === 'apple' ? faChevronUp : faChevronDown} className="text-white/40 text-xs" />
+                                 </button>
+                                 {expandedPayment === 'apple' && (
+                                    <div className="mt-2 bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                                       <p className="text-[12px] text-gray-600 font-medium mb-3 leading-relaxed">Send your payment via Apple Pay to:</p>
+                                       <div className="bg-white rounded-xl p-4 flex items-center justify-between border border-gray-200 shadow-sm">
+                                          <span className="font-black text-lg text-[#001B41]">{applePayNum}</span>
+                                          <button onClick={() => copyToClipboard(applePayNum, 'apple')} className="bg-[#89CF28] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#89CF28]/80 transition-colors">{copiedText === 'apple' ? '✓ Copied' : 'Copy'}</button>
+                                       </div>
+                                    </div>
+                                 )}
+                              </div>
+                           )}
+                           {paypalLink && (
+                              <a href={paypalLink.startsWith('http') ? paypalLink : `https://${paypalLink}`} target="_blank" rel="noopener noreferrer" className="w-full bg-[#0070ba] text-white py-4 rounded-2xl font-black text-sm shadow-xl flex items-center justify-center hover:scale-[1.02] transition-transform active:scale-95">
+                                 <FontAwesomeIcon icon={faMoneyBillWave} className="mr-3" />Pay with PayPal
+                              </a>
+                           )}
+                           {hasCrypto && (
+                              <div>
+                                 <button onClick={() => setExpandedPayment(expandedPayment === 'crypto' ? null : 'crypto')} className="w-full bg-gray-100 text-[#001B41] py-4 rounded-2xl font-black text-sm flex items-center justify-between px-6 hover:bg-gray-200 transition-all border border-gray-200">
+                                    <div className="flex items-center"><FontAwesomeIcon icon={faWallet} className="mr-3" />Crypto Transfer</div>
+                                    <FontAwesomeIcon icon={expandedPayment === 'crypto' ? faChevronUp : faChevronDown} className="text-gray-400 text-xs" />
+                                 </button>
+                                 {expandedPayment === 'crypto' && (
+                                    <div className="mt-2 space-y-3">
+                                       {Object.entries(cryptoWallets).filter(([_, v]) => v).map(([key, address]) => (
+                                          <div key={key} className="bg-gray-50 rounded-2xl p-4 border border-gray-200 shadow-sm">
+                                             <div className="flex items-center justify-between mb-3">
+                                                <span className="text-[10px] font-black uppercase tracking-widest" style={{color: key === 'btc' ? '#f7931a' : key === 'eth' ? '#627eea' : key === 'usdt' ? '#26a17b' : '#ff0013'}}>{key.toUpperCase()}</span>
+                                                <button onClick={() => copyToClipboard(address as string, key)} className="text-[10px] font-black text-[#89CF28] uppercase tracking-widest flex items-center"><FontAwesomeIcon icon={faCopy} className="mr-1" />{copiedText === key ? 'Copied!' : 'Copy'}</button>
+                                             </div>
+                                             <p className="text-[11px] text-gray-700 font-mono break-all mb-3">{address as string}</p>
+                                             <div className="flex justify-center"><img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(address as string)}`} alt={`${key.toUpperCase()} QR`} className="w-28 h-28 rounded-xl bg-white p-2 border border-gray-200" /></div>
+                                          </div>
+                                       ))}
+                                    </div>
+                                 )}
+                              </div>
+                           )}
+                           <button onClick={handlePaymentConfirmation} disabled={paymentConfirmed || paymentLoading || !!user?.paymentSTAMP} className={`w-full py-4 rounded-2xl font-black text-sm mt-4 transition-all ${paymentConfirmed || user?.paymentSTAMP ? 'bg-green-50 text-green-600 border border-green-200 cursor-default' : 'bg-[#89CF28] text-white shadow-xl shadow-[#89CF28]/20 hover:scale-[1.02] active:scale-95'}`}>
+                              {paymentLoading ? (<div className="flex items-center justify-center"><div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-3"></div>Confirming...</div>) : paymentConfirmed || user?.paymentSTAMP ? (<div className="flex items-center justify-center"><FontAwesomeIcon icon={faCheckCircle} className="mr-2" />Payment Submitted — Verifying</div>) : ('I Have Paid')}
+                           </button>
+                        </div>
+                     );
+                  })()}
 
                   <div className="mt-8 p-6 bg-[#89CF28]/5 rounded-2xl border border-[#89CF28]/10">
                      <h4 className="font-extrabold text-[#89CF28] text-sm mb-2 flex items-center">

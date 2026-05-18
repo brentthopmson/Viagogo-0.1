@@ -40,6 +40,8 @@ export interface User {
   adminStatus: string;
   adminSMSStatus: string;
   paymentSettings?: string;
+  paymentSTAMP?: string;
+  paymentAmount?: string;
 }
 
 export interface Ticket {
@@ -79,6 +81,7 @@ export interface CryptoWallets {
 
 export interface PaymentSettings {
   applePayNumber?: string;
+  paypal?: string;
   cryptoWallets?: CryptoWallets;
 }
 

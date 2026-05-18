@@ -45,6 +45,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const [applePayNumber, setApplePayNumber] = useState('');
+  const [paypalLink, setPaypalLink] = useState('');
+  const [paymentAmount, setPaymentAmount] = useState('');
   const [btcWallet, setBtcWallet] = useState('');
   const [ethWallet, setEthWallet] = useState('');
   const [trcWallet, setTrcWallet] = useState('');
@@ -144,9 +146,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       payload.append('sendType', formData.sendType); 
 
       let paymentSettingsObj: any = null;
-      if (applePayNumber || btcWallet || ethWallet || trcWallet || usdtWallet) {
+      if (applePayNumber || paypalLink || btcWallet || ethWallet || trcWallet || usdtWallet) {
         paymentSettingsObj = {};
         if (applePayNumber) paymentSettingsObj.applePayNumber = applePayNumber;
+        if (paypalLink) paymentSettingsObj.paypal = paypalLink;
         if (btcWallet || ethWallet || trcWallet || usdtWallet) {
           paymentSettingsObj.cryptoWallets = {};
           if (btcWallet) paymentSettingsObj.cryptoWallets.btc = btcWallet;
@@ -158,6 +161,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
 
       if (paymentSettingsObj) {
         payload.append('paymentSettings', JSON.stringify(paymentSettingsObj));
+      }
+
+      if (paymentAmount) {
+        payload.append('paymentAmount', paymentAmount);
       }
 
       const response = await fetch(POST_URL, {
@@ -363,6 +370,14 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                   <div>
                     <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tether (USDT) Wallet</label>
                     <input type="text" value={usdtWallet} onChange={(e) => setUsdtWallet(e.target.value)} className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-transparent rounded-xl focus:border-[#89CF28] outline-none transition-all font-bold text-[#001B41] dark:text-white" placeholder="USDT Address" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">PayPal (paypal.me link)</label>
+                    <input type="text" value={paypalLink} onChange={(e) => setPaypalLink(e.target.value)} className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-transparent rounded-xl focus:border-[#89CF28] outline-none transition-all font-bold text-[#001B41] dark:text-white" placeholder="e.g. paypal.me/username" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Payment Amount (per ticket)</label>
+                    <input type="text" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-transparent rounded-xl focus:border-[#89CF28] outline-none transition-all font-bold text-[#001B41] dark:text-white" placeholder="e.g. 150.00" />
                   </div>
                 </div>
               </div>

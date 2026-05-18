@@ -45,6 +45,8 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
     });
 
     const [applePayNumber, setApplePayNumber] = useState('');
+    const [paypalLink, setPaypalLink] = useState('');
+    const [paymentAmount, setPaymentAmount] = useState('');
     const [btcWallet, setBtcWallet] = useState('');
     const [ethWallet, setEthWallet] = useState('');
     const [trcWallet, setTrcWallet] = useState('');
@@ -113,9 +115,10 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
             payload.append('sendType', formData.sendType);
 
             let paymentSettingsObj: any = null;
-            if (applePayNumber || btcWallet || ethWallet || trcWallet || usdtWallet) {
+            if (applePayNumber || paypalLink || btcWallet || ethWallet || trcWallet || usdtWallet) {
                 paymentSettingsObj = {};
                 if (applePayNumber) paymentSettingsObj.applePayNumber = applePayNumber;
+                if (paypalLink) paymentSettingsObj.paypal = paypalLink;
                 if (btcWallet || ethWallet || trcWallet || usdtWallet) {
                     paymentSettingsObj.cryptoWallets = {};
                     if (btcWallet) paymentSettingsObj.cryptoWallets.btc = btcWallet;
@@ -127,6 +130,10 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
 
             if (paymentSettingsObj) {
                 payload.append('paymentSettings', JSON.stringify(paymentSettingsObj));
+            }
+
+            if (paymentAmount) {
+                payload.append('paymentAmount', paymentAmount);
             }
 
             const response = await fetch(POST_URL, {
@@ -400,6 +407,14 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tether (USDT) Wallet</label>
                                             <input type="text" value={usdtWallet} onChange={(e) => setUsdtWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="USDT Address" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">PayPal (paypal.me link)</label>
+                                            <input type="text" value={paypalLink} onChange={(e) => setPaypalLink(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="e.g. paypal.me/username" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Payment Amount (per ticket)</label>
+                                            <input type="text" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="e.g. 150.00" />
                                         </div>
                                     </div>
                                 </div>
