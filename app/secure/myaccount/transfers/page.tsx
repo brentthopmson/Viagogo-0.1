@@ -58,7 +58,7 @@ export default function TransfersPage() {
         { icon: faCog, label: 'Account Settings', active: false, href: '/secure/myaccount/manage' },
         { icon: faShieldAlt, label: 'Privacy', active: false, href: '#' },
         { icon: faQuestionCircle, label: 'Help', active: false, href: '#' },
-        { icon: faSignOutAlt, label: 'Sign Out', active: false, action: handleLogout },
+        { icon: faSignOutAlt, label: 'Sign Out', active: false, href: '#', action: handleLogout },
     ];
 
     useEffect(() => {

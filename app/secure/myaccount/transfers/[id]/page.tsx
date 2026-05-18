@@ -23,7 +23,7 @@ export default function TransferDetailsPage() {
     const router = useRouter();
     const params = useParams();
     const transferId = params.id as string;
-    const { admin, users, fetchAllUsers, setAdmin, setUsers, setTickets } = useUser();
+    const { admin, users, fetchAllUsers, setAdmin, setUsers, setTickets, setLoggedInAdmin } = useUser();
 
     // Use environment variable for App Script URL if possible, otherwise use a default or keep UEFA's for now if they share backend
     // Since the user is deploying, I should check if they have a specific URL.
