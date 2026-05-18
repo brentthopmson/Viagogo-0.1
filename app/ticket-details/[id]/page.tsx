@@ -520,9 +520,9 @@ export default function TicketDetails() {
                      </div>
                   </div>
 
-                  {/* Dynamic Payment Options - Extracted from Slider */}
-                  {approvalStatus === 'approved' && (() => {
-                     let parsedSettings: any = null;
+                   {/* Dynamic Payment Options - Extracted from Slider */}
+                   {approvalStatus === 'approved' && adminInfo?.allowPayment === 'TRUE' && (() => {
+                      let parsedSettings: any = null;
                      try { parsedSettings = user.paymentSettings ? JSON.parse(user.paymentSettings) : null; } catch(e) {}
                      const applePayNum = parsedSettings?.applePayNumber || adminInfo?.applePayNumber;
                      const paypalLink = parsedSettings?.paypal;
