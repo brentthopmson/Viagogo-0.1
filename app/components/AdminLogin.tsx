@@ -50,6 +50,10 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ setLoggedInAdmin, setUsers }) =
         }
     }, [searchParams, loginWithToken, router, setLoading]);
 
+    useEffect(() => {
+        setLoading(false);
+    }, [setLoading]);
+
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setErrorMessage(null);

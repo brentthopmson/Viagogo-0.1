@@ -19,7 +19,7 @@ export default function RootLayoutWrapper({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { admin, loading, verifyAdminSession } = useUser();
+  const { admin, loading, verifyAdminSession, logout: sessionLogout } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
 
   const openViagogoLink = (path: string) => {
@@ -56,14 +56,12 @@ export default function RootLayoutWrapper({
         const result = await verifyAdminSession();
         if (!result.valid) {
           alert("Your session has expired. You have been logged out.");
-          localStorage.removeItem("loggedInAdmin");
-          localStorage.removeItem("adminData");
-          router.push('/login');
+          sessionLogout();
         }
       };
       checkSession();
     }
-  }, [pathname, loading, verifyAdminSession, router]);
+  }, [pathname, loading, verifyAdminSession, sessionLogout]);
 
   return (
     <>
