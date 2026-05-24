@@ -8,7 +8,8 @@ import Image from 'next/image';
 import { useUser } from '../../UserContext';
 
 const APP_SCRIPT_POST_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_URL || "";
-const APP_SCRIPT_ADMIN_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_ADMIN_URL || "";
+const APP_SCRIPT_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_URL || "";
+const APP_SCRIPT_ADMIN_URL = APP_SCRIPT_URL + "?sheetname=admin";
 
 export default function TicketDetails() {
     const router = useRouter();

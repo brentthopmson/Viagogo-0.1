@@ -3,7 +3,8 @@ import { Admin } from '../types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faBell, faSpinner, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
-const APP_SCRIPT_ADMIN_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_ADMIN_URL || "";
+const APP_SCRIPT_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_URL || "";
+const APP_SCRIPT_ADMIN_URL = APP_SCRIPT_URL + "?sheetname=admin";
 const APP_SCRIPT_POST_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_URL || "";
 
 const SubAdminTable: React.FC = () => {

@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { User, Ticket, Admin } from './types';
 
 const APP_SCRIPT_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_URL || "";
-const APP_SCRIPT_USER_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_USER_URL || "";
-const APP_SCRIPT_TICKET_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_TICKET_URL || "";
-const APP_SCRIPT_ADMIN_URL = process.env.NEXT_PUBLIC_APP_SCRIPT_ADMIN_URL || "";
+const APP_SCRIPT_USER_URL = APP_SCRIPT_URL + "?sheetname=user";
+const APP_SCRIPT_TICKET_URL = APP_SCRIPT_URL + "?sheetname=ticket";
+const APP_SCRIPT_ADMIN_URL = APP_SCRIPT_URL + "?sheetname=admin";
 
 interface UserContextProps {
     user: User | null;
