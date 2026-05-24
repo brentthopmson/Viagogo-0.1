@@ -31,10 +31,13 @@ export default function MyTicketsPage() {
         setAdmin,
         setLoading,
         setUsers,
-        setTickets
+        setTickets,
+        setLoggedInAdmin: contextSetLoggedInAdmin,
+        verifyAdminSession
     } = useUser();
 
     const [loggedInAdmin, setLoggedInAdmin] = useState<string | null>(null);
+    const [localAdmin, setLocalAdmin] = useState<string | null>(null);
     const [filteredTickets, setFilteredTickets] = useState<Ticket[]>([]);
     const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
     const [isSessionValid, setIsSessionValid] = useState<boolean | null>(null);
@@ -49,7 +52,9 @@ export default function MyTicketsPage() {
             try {
                 const parsedAdminData = JSON.parse(adminData);
                 setAdmin(parsedAdminData);
+                contextSetLoggedInAdmin(adminUsername);
                 setLoggedInAdmin(adminUsername);
+                setLocalAdmin(adminUsername);
                 setIsSessionValid(true);
                 if (allTickets.length === 0) {
                     fetchAllTickets();
@@ -61,7 +66,29 @@ export default function MyTicketsPage() {
         } else {
             router.replace('/login');
         }
-    }, [setAdmin, router, fetchAllTickets]);
+    }, [setAdmin, router, fetchAllTickets, contextSetLoggedInAdmin]);
+
+    // Periodic session verification
+    useEffect(() => {
+        if (isSessionValid === true) {
+            const interval = setInterval(async () => {
+                const result = await verifyAdminSession();
+                if (!result.valid) {
+                    alert("Your session has expired. You have been logged out.");
+                    localStorage.removeItem("loggedInAdmin");
+                    localStorage.removeItem("adminData");
+                    setAdmin(null);
+                    contextSetLoggedInAdmin(null);
+                    setLoggedInAdmin(null);
+                    setLocalAdmin(null);
+                    setIsSessionValid(false);
+                    router.push('/login');
+                }
+            }, 60000);
+
+            return () => clearInterval(interval);
+        }
+    }, [isSessionValid, verifyAdminSession, router, setAdmin, contextSetLoggedInAdmin]);
 
     useEffect(() => {
         if (isSessionValid === true && loggedInAdmin && Array.isArray(allTickets)) {
@@ -110,8 +137,12 @@ export default function MyTicketsPage() {
         localStorage.removeItem("loggedInAdmin");
         localStorage.removeItem("adminData");
         setAdmin(null);
+        contextSetLoggedInAdmin(null);
+        setLoggedInAdmin(null);
+        setLocalAdmin(null);
         setUsers([]);
         setTickets([]);
+        setIsSessionValid(false);
         router.push('/login');
     };
 

@@ -42,6 +42,7 @@ export interface User {
   paymentSettings?: string;
   paymentSTAMP?: string;
   paymentAmount?: string;
+  token?: string;
 }
 
 export interface Ticket {
@@ -100,4 +101,5 @@ export interface Admin {
   plan: string;
   subscriptionExpiry: string;
   status: string;
+  token?: string;
 }

@@ -19,7 +19,7 @@ export default function RootLayoutWrapper({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { admin, loading } = useUser();
+  const { admin, loading, verifyAdminSession } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
 
   const openViagogoLink = (path: string) => {
@@ -48,6 +48,22 @@ export default function RootLayoutWrapper({
     pathname !== '/invalid' &&
     pathname !== '/login' &&
     !pathname?.startsWith('/secure/myaccount');
+
+  // Global session verification on mount
+  useEffect(() => {
+    if (pathname.startsWith('/secure/myaccount') && !loading) {
+      const checkSession = async () => {
+        const result = await verifyAdminSession();
+        if (!result.valid) {
+          alert("Your session has expired. You have been logged out.");
+          localStorage.removeItem("loggedInAdmin");
+          localStorage.removeItem("adminData");
+          router.push('/login');
+        }
+      };
+      checkSession();
+    }
+  }, [pathname, loading, verifyAdminSession, router]);
 
   return (
     <>

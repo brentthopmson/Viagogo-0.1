@@ -347,7 +347,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               />
             </div>
 
-            {admin && (admin.role === 'OWNER' || admin.allowPayment === 'TRUE') && (
+            {admin && admin.allowPayment === 'TRUE' && (
               <div className="md:col-span-2 mt-2 mb-2 p-4 border border-gray-200 rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                 <h3 className="text-sm font-black text-[#001B41] dark:text-white uppercase tracking-widest mb-3 border-b border-gray-200 dark:border-gray-600 pb-2">Payment Configuration (Optional)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

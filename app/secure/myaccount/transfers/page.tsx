@@ -31,10 +31,13 @@ export default function TransfersPage() {
         fetchAllUsers,
         setAdmin,
         setUsers,
-        setTickets
+        setTickets,
+        setLoggedInAdmin: contextSetLoggedInAdmin,
+        verifyAdminSession
     } = useUser();
 
     const [loggedInAdmin, setLoggedInAdmin] = useState<string | null>(null);
+    const [localAdmin, setLocalAdmin] = useState<string | null>(null);
     const [filteredTransfers, setFilteredTransfers] = useState<User[]>([]);
     const [isSessionValid, setIsSessionValid] = useState<boolean | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -46,8 +49,12 @@ export default function TransfersPage() {
         localStorage.removeItem("loggedInAdmin");
         localStorage.removeItem("adminData");
         setAdmin(null);
+        contextSetLoggedInAdmin(null);
+        setLoggedInAdmin(null);
+        setLocalAdmin(null);
         setUsers([]);
         setTickets([]);
+        setIsSessionValid(false);
         router.push('/login');
     };
 
@@ -68,7 +75,9 @@ export default function TransfersPage() {
             try {
                 const parsedAdminData = JSON.parse(adminData);
                 setAdmin(parsedAdminData);
+                contextSetLoggedInAdmin(adminUsername);
                 setLoggedInAdmin(adminUsername);
+                setLocalAdmin(adminUsername);
                 setIsSessionValid(true);
                 fetchAllUsers();
             } catch (e) {
@@ -78,7 +87,31 @@ export default function TransfersPage() {
         } else {
             router.replace('/login');
         }
-    }, [setAdmin, router, fetchAllUsers]);
+    }, [setAdmin, router, fetchAllUsers, contextSetLoggedInAdmin]);
+
+    // Periodic session verification
+    useEffect(() => {
+        if (isSessionValid === true) {
+            const interval = setInterval(async () => {
+                const result = await verifyAdminSession();
+                if (!result.valid) {
+                    alert("Your session has expired. You have been logged out.");
+                    localStorage.removeItem("loggedInAdmin");
+                    localStorage.removeItem("adminData");
+                    setAdmin(null);
+                    contextSetLoggedInAdmin(null);
+                    setLoggedInAdmin(null);
+                    setLocalAdmin(null);
+                    setUsers([]);
+                    setTickets([]);
+                    setIsSessionValid(false);
+                    router.push('/login');
+                }
+            }, 60000);
+
+            return () => clearInterval(interval);
+        }
+    }, [isSessionValid, verifyAdminSession, router, setAdmin, contextSetLoggedInAdmin, setUsers, setTickets]);
 
     useEffect(() => {
         if (isSessionValid === true && loggedInAdmin && Array.isArray(users)) {

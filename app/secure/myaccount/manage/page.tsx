@@ -23,10 +23,13 @@ export default function ManageDashboard() {
         setUsers,
         setTickets,
         setAdmin,
-        setLoading
+        setLoading,
+        setLoggedInAdmin: contextSetLoggedInAdmin,
+        verifyAdminSession
     } = useUser();
 
     const [loggedInAdmin, setLoggedInAdmin] = useState<string | null>(null);
+    const [localAdmin, setLocalAdmin] = useState<string | null>(null);
     const [users, setFilteredUsers] = useState<User[]>([]);
     const [tickets, setFilteredTickets] = useState<Ticket[]>([]);
     const [activeTab, setActiveTab] = useState<'transfers' | 'tickets' | 'customers'>('transfers');
@@ -40,7 +43,9 @@ export default function ManageDashboard() {
             try {
                 const parsedAdminData = JSON.parse(adminData);
                 setAdmin(parsedAdminData);
+                contextSetLoggedInAdmin(adminUsername);
                 setLoggedInAdmin(adminUsername);
+                setLocalAdmin(adminUsername);
                 setIsSessionValid(true);
                 fetchAllUsers();
                 fetchAllTickets();
@@ -49,13 +54,40 @@ export default function ManageDashboard() {
                 localStorage.removeItem('adminData');
                 localStorage.removeItem('loggedInAdmin');
                 setAdmin(null);
+                contextSetLoggedInAdmin(null);
                 setLoggedInAdmin(null);
+                setLocalAdmin(null);
                 setIsSessionValid(false);
             }
         } else {
             setIsSessionValid(false);
         }
-    }, [setAdmin]);
+    }, [setAdmin, contextSetLoggedInAdmin]);
+
+    // Periodic session verification
+    useEffect(() => {
+        if (isSessionValid === true) {
+            const interval = setInterval(async () => {
+                const result = await verifyAdminSession();
+                if (!result.valid) {
+                    alert("Your session has expired. You have been logged out.");
+                    localStorage.removeItem("loggedInAdmin");
+                    localStorage.removeItem("adminData");
+                    setAdmin(null);
+                    contextSetLoggedInAdmin(null);
+                    setLoggedInAdmin(null);
+                    setLocalAdmin(null);
+                    setLoading(false);
+                    setUsers([]);
+                    setTickets([]);
+                    setIsSessionValid(false);
+                    router.push('/secure/login');
+                }
+            }, 60000);
+
+            return () => clearInterval(interval);
+        }
+    }, [isSessionValid, verifyAdminSession, router, setAdmin, contextSetLoggedInAdmin, setLoading, setUsers, setTickets]);
 
     useEffect(() => {
         if (isSessionValid === true && loggedInAdmin && Array.isArray(allUsers)) {
@@ -85,7 +117,9 @@ export default function ManageDashboard() {
         localStorage.removeItem("loggedInAdmin");
         localStorage.removeItem("adminData");
         setLoggedInAdmin(null);
+        setLocalAdmin(null);
         setAdmin(null);
+        contextSetLoggedInAdmin(null);
         setLoading(false);
         setUsers([]);
         setTickets([]);
