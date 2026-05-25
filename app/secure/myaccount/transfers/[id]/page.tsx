@@ -117,7 +117,7 @@ export default function TransferDetailsPage() {
     return (
         <div className="min-h-screen bg-[#f4f7f9] flex flex-col font-sans">
             {/* Header */}
-            <header className="bg-white text-[#001B41] border-b border-gray-100 px-4 py-3 sticky top-0 z-50">
+            <header className="bg-white text-[#001B41] border-b border-gray-100 px-4 py-3 fixed top-0 z-50">
                 <div className="max-w-3xl mx-auto flex items-center justify-between">
                     <button onClick={() => router.back()} className="text-[#001B41] hover:opacity-70 transition-opacity p-1">
                         <FontAwesomeIcon icon={faChevronLeft} className="text-xl" />
@@ -129,7 +129,7 @@ export default function TransferDetailsPage() {
                 </div>
             </header>
 
-            <main className="flex-1 w-full max-w-3xl mx-auto p-4 space-y-4 pb-20">
+            <main className="flex-1 w-full max-w-3xl mx-auto pt-[72px] p-4 space-y-4 pb-20">
                 
                 {/* Status Banner */}
                 <div className={`${theme.banner} rounded-[24px] p-6 text-white shadow-lg`}>
