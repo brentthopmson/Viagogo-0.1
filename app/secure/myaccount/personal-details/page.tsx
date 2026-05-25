@@ -128,6 +128,7 @@ export default function PersonalDetailsPage() {
     const handleLogout = () => {
         localStorage.removeItem("loggedInAdmin");
         localStorage.removeItem("adminData");
+        localStorage.removeItem("adminToken");
         setAdmin(null);
         setIsSessionValid(false);
         router.push('/login');

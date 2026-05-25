@@ -92,6 +92,7 @@ export default function ManageDashboard() {
     const handleLogout = () => {
         localStorage.removeItem("loggedInAdmin");
         localStorage.removeItem("adminData");
+        localStorage.removeItem("adminToken");
         setLoggedInAdmin(null);
         setLocalAdmin(null);
         setAdmin(null);

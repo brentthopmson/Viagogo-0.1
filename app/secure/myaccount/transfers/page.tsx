@@ -47,6 +47,7 @@ export default function TransfersPage() {
     const handleLogout = () => {
         localStorage.removeItem("loggedInAdmin");
         localStorage.removeItem("adminData");
+        localStorage.removeItem("adminToken");
         setAdmin(null);
         contextSetLoggedInAdmin(null);
         setLoggedInAdmin(null);

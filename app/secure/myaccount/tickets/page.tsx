@@ -113,6 +113,7 @@ export default function MyTicketsPage() {
     const handleLogout = () => {
         localStorage.removeItem("loggedInAdmin");
         localStorage.removeItem("adminData");
+        localStorage.removeItem("adminToken");
         setAdmin(null);
         contextSetLoggedInAdmin(null);
         setLoggedInAdmin(null);

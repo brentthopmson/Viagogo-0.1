@@ -19,7 +19,7 @@ export default function RootLayoutWrapper({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { admin } = useUser();
+  const { admin, logout } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
 
   const openViagogoLink = (path: string) => {
@@ -38,9 +38,7 @@ export default function RootLayoutWrapper({
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("loggedInAdmin");
-    localStorage.removeItem("adminData");
-    router.push('/login'); // Changed from window.location.href to router.push
+    logout();
   };
 
   const shouldShowHeaderFooter =
