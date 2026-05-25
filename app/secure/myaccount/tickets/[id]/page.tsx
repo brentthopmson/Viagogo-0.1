@@ -109,7 +109,7 @@ export default function TicketDetailsAccountPage() {
     return (
         <div className="min-h-screen bg-[#f4f7f9] flex flex-col font-sans">
             {/* Header - White Background as requested */}
-            <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 fixed top-0 z-50">
+            <header className="bg-white text-[#001B41] border-b border-gray-100 p-4 fixed top-0 left-0 right-0 z-50">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center">
 

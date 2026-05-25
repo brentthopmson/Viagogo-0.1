@@ -158,12 +158,12 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
             {/* Modal Container - Bottom Up Animation */}
             <div className={`w-full max-w-lg bg-white rounded-t-[32px] overflow-hidden transition-transform duration-500 ease-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
                 
                 {/* Header */}
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
                     <div className="flex items-center">
                         {view !== 'options' && view !== 'success' && (
                             <button onClick={() => setView('options')} className="mr-4 text-gray-400 hover:text-black">
