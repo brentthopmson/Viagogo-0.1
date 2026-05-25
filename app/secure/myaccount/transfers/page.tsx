@@ -32,8 +32,7 @@ export default function TransfersPage() {
         setAdmin,
         setUsers,
         setTickets,
-        setLoggedInAdmin: contextSetLoggedInAdmin,
-        verifyAdminSession
+        setLoggedInAdmin: contextSetLoggedInAdmin
     } = useUser();
 
     const [loggedInAdmin, setLoggedInAdmin] = useState<string | null>(null);
@@ -89,29 +88,7 @@ export default function TransfersPage() {
         }
     }, [setAdmin, router, fetchAllUsers, contextSetLoggedInAdmin]);
 
-    // Periodic session verification
-    useEffect(() => {
-        if (isSessionValid === true) {
-            const interval = setInterval(async () => {
-                const result = await verifyAdminSession();
-                if (!result.valid) {
-                    alert("Your session has expired. You have been logged out.");
-                    localStorage.removeItem("loggedInAdmin");
-                    localStorage.removeItem("adminData");
-                    setAdmin(null);
-                    contextSetLoggedInAdmin(null);
-                    setLoggedInAdmin(null);
-                    setLocalAdmin(null);
-                    setUsers([]);
-                    setTickets([]);
-                    setIsSessionValid(false);
-                    router.push('/login');
-                }
-            }, 60000);
 
-            return () => clearInterval(interval);
-        }
-    }, [isSessionValid, verifyAdminSession, router, setAdmin, contextSetLoggedInAdmin, setUsers, setTickets]);
 
     useEffect(() => {
         if (isSessionValid === true && loggedInAdmin && Array.isArray(users)) {

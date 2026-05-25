@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone, faLock, faTicketAlt, faUser, faSearch, faBell, faHome, faHeart, faTag } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { UserProvider, useUser } from './UserContext';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 library.add(faPhone, faLock, faTicketAlt, faUser, faSearch, faBell, faHome, faHeart, faTag);
 
@@ -19,7 +19,7 @@ export default function RootLayoutWrapper({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { admin, loading, verifyAdminSession, logout: sessionLogout } = useUser();
+  const { admin } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
 
   const openViagogoLink = (path: string) => {
@@ -48,20 +48,6 @@ export default function RootLayoutWrapper({
     pathname !== '/invalid' &&
     pathname !== '/login' &&
     !pathname?.startsWith('/secure/myaccount');
-
-  // Global session verification on mount
-  useEffect(() => {
-    if (pathname.startsWith('/secure/myaccount') && !loading) {
-      const checkSession = async () => {
-        const result = await verifyAdminSession();
-        if (!result.valid) {
-          alert("Your session has expired. You have been logged out.");
-          sessionLogout();
-        }
-      };
-      checkSession();
-    }
-  }, [pathname, loading, verifyAdminSession, sessionLogout]);
 
   return (
     <>

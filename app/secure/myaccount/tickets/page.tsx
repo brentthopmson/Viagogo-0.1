@@ -32,9 +32,7 @@ export default function MyTicketsPage() {
         setLoading,
         setUsers,
         setTickets,
-        setLoggedInAdmin: contextSetLoggedInAdmin,
-        verifyAdminSession,
-        logout
+        setLoggedInAdmin: contextSetLoggedInAdmin
     } = useUser();
 
     const [loggedInAdmin, setLoggedInAdmin] = useState<string | null>(null);
@@ -60,13 +58,6 @@ export default function MyTicketsPage() {
                 if (allTickets.length === 0) {
                     fetchAllTickets();
                 }
-
-                verifyAdminSession().then(result => {
-                    if (!result.valid) {
-                        alert("Your session has expired. Please log in again.");
-                        logout();
-                    }
-                });
             } catch (e) {
                 console.error("Error parsing admin data", e);
                 router.replace('/login');
@@ -74,22 +65,7 @@ export default function MyTicketsPage() {
         } else {
             router.replace('/login');
         }
-    }, [setAdmin, router, fetchAllTickets, contextSetLoggedInAdmin, verifyAdminSession, logout]);
-
-    // Periodic session verification
-    useEffect(() => {
-        if (isSessionValid === true) {
-            const interval = setInterval(async () => {
-                const result = await verifyAdminSession();
-                if (!result.valid) {
-                    alert("Your session has expired. You have been logged out.");
-                    logout();
-                }
-            }, 60000);
-
-            return () => clearInterval(interval);
-        }
-    }, [isSessionValid, verifyAdminSession, logout]);
+    }, [setAdmin, router, fetchAllTickets, contextSetLoggedInAdmin]);
 
     useEffect(() => {
         if (isSessionValid === true && loggedInAdmin && Array.isArray(allTickets)) {
