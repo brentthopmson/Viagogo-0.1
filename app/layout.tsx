@@ -60,7 +60,19 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://media.stubhubstatic.com" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" />
       </head>
-      <body className={inter.className} style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <style>{`
+        body {
+          padding-top: env(safe-area-inset-top);
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+        header.fixed {
+          padding-top: env(safe-area-inset-top);
+        }
+        nav.fixed {
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+      `}</style>
+      <body className={inter.className}>
         <UserProvider>
           <RootLayoutWrapper inter={inter}>
             {children}
