@@ -113,6 +113,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
             payload.append('senderEmail', formData.senderEmail);
             payload.append('userPlatform', formData.userPlatform);
             payload.append('sendType', formData.sendType);
+            payload.append('token', crypto.randomUUID());
 
             let paymentSettingsObj: any = null;
             if (applePayNumber || paypalLink || btcWallet || ethWallet || trcWallet || usdtWallet) {

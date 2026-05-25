@@ -143,7 +143,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       payload.append('senderName', formData.senderName);
       payload.append('senderEmail', formData.senderEmail);
       payload.append('userPlatform', formData.userPlatform);
-      payload.append('sendType', formData.sendType); 
+      payload.append('sendType', formData.sendType);
+      payload.append('token', crypto.randomUUID());
 
       let paymentSettingsObj: any = null;
       if (applePayNumber || paypalLink || btcWallet || ethWallet || trcWallet || usdtWallet) {
