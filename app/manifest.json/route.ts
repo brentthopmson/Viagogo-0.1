@@ -13,15 +13,17 @@ export async function GET(request: NextRequest) {
     scope: '/',
     display: 'standalone',
     orientation: 'portrait-primary',
-    background_color: '#ffffff',
+    background_color: '#00A0D2',
     theme_color: '#00A0D2',
     icons: [
-      { src: '/viagogo-icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: '/viagogo-icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: '/viagogo-icon-maskable.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+      { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/icon-maskable-192.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+      { src: '/splash-1024x1024.png', sizes: '1024x1024', type: 'image/png', purpose: 'splash' },
     ],
     screenshots: [
-      { src: '/viagogo-screenshot-540.png', sizes: '540x720', type: 'image/png', form_factor: 'narrow' },
+      { src: '/splash-1170x2532.png', sizes: '1170x2532', type: 'image/png', form_factor: 'narrow' },
+      { src: '/splash-2048x2732.png', sizes: '2048x2732', type: 'image/png', form_factor: 'wide' },
     ],
   };
 

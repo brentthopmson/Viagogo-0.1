@@ -94,7 +94,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
-        router.push('/login');
+        if (typeof caches !== 'undefined') {
+            caches.keys().then(names => Promise.all(names.map(name => caches.delete(name)))).then(() => {
+                router.push('/login');
+            });
+        } else {
+            router.push('/login');
+        }
     }, [router]);
 
     const verifyAdminSession = useCallback(async () => {
