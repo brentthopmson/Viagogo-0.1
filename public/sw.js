@@ -4,8 +4,25 @@ const IMAGE_CACHE = `${CACHE_PREFIX}-images`;
 const API_CACHE = `${CACHE_PREFIX}-api`;
 const PAGE_CACHE = `${CACHE_PREFIX}-pages`;
 
-self.addEventListener('install', () => {
-  self.skipWaiting();
+const PRECACHE_URLS = [
+  '/',
+  '/login',
+  '/secure/myaccount/tickets',
+  '/secure/myaccount/transfers',
+  '/secure/myaccount/manage',
+  '/secure/myaccount/personal-details',
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(PAGE_CACHE).then((cache) =>
+      Promise.allSettled(
+        PRECACHE_URLS.map((url) =>
+          fetch(url).then((res) => { if (res.ok) cache.put(url, res); }).catch(() => {})
+        )
+      )
+    ).then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (event) => {
