@@ -1,6 +1,10 @@
 const CACHE_PREFIX = 'viagogo';
+const STATIC_CACHE = `${CACHE_PREFIX}-static`;
+const IMAGE_CACHE = `${CACHE_PREFIX}-images`;
+const API_CACHE = `${CACHE_PREFIX}-api`;
+const PAGE_CACHE = `${CACHE_PREFIX}-pages`;
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
@@ -24,7 +28,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (url.href.includes('script.google.com') || url.href.includes('googleusercontent.com')) {
-    event.respondWith(networkFirstWithCache(request, `${CACHE_PREFIX}-api`));
+    event.respondWith(networkFirstWithCache(request, API_CACHE));
     return;
   }
 
@@ -34,7 +38,7 @@ self.addEventListener('fetch', (event) => {
     request.destination === 'font' ||
     url.pathname.match(/\.(js|css|woff2?|ttf|svg|ico)(\?.*)?$/)
   ) {
-    event.respondWith(cacheFirst(request, `${CACHE_PREFIX}-static`));
+    event.respondWith(cacheFirst(request, STATIC_CACHE));
     return;
   }
 
@@ -42,14 +46,15 @@ self.addEventListener('fetch', (event) => {
     request.destination === 'image' ||
     url.pathname.match(/\.(png|jpg|jpeg|gif|webp)(\?.*)?$/) ||
     url.pathname.startsWith('/splash-') ||
-    url.pathname.startsWith('/icon-')
+    url.pathname.startsWith('/icon-') ||
+    url.pathname.startsWith('/favicon')
   ) {
-    event.respondWith(cacheFirst(request, `${CACHE_PREFIX}-images`));
+    event.respondWith(cacheFirst(request, IMAGE_CACHE));
     return;
   }
 
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirstWithCache(request, `${CACHE_PREFIX}-pages`));
+    event.respondWith(networkFirstWithCache(request, PAGE_CACHE));
     return;
   }
 
@@ -61,12 +66,12 @@ async function cacheFirst(request, cacheName) {
   if (cached) return cached;
   try {
     const response = await fetch(request);
-    if (response.ok) {
+    if (response.ok || response.type === 'opaqueredirect') {
       const c = await caches.open(cacheName);
       c.put(request, response.clone());
     }
     return response;
-  } catch (e) {
+  } catch {
     return new Response('Offline', { status: 503 });
   }
 }
@@ -74,16 +79,16 @@ async function cacheFirst(request, cacheName) {
 async function networkFirstWithCache(request, cacheName) {
   try {
     const response = await fetch(request);
-    if (response.ok) {
+    if (response.ok || response.type === 'opaqueredirect') {
       const c = await caches.open(cacheName);
       c.put(request, response.clone());
     }
     return response;
-  } catch (e) {
+  } catch {
     const cached = await caches.open(cacheName).then((c) => c.match(request));
     if (cached) return cached;
     if (request.mode === 'navigate') {
-      const fallback = await caches.open(`${CACHE_PREFIX}-pages`).then((c) => c.match('/login'));
+      const fallback = await caches.open(PAGE_CACHE).then((c) => c.match('/login'));
       if (fallback) return fallback;
     }
     return new Response(JSON.stringify({ error: 'No internet connection', offline: true }), {

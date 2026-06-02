@@ -16,6 +16,7 @@ interface UserContextProps {
     tickets: Ticket[];
     admin: Admin | null;
     loading: boolean;
+    isOffline: boolean;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     setUsers: React.Dispatch<React.SetStateAction<User[]>>;
     setTicket: React.Dispatch<React.SetStateAction<Ticket | null>>;
@@ -40,6 +41,7 @@ const UserContext = createContext<UserContextProps>({
     tickets: [],
     admin: null,
     loading: true,
+    isOffline: false,
     setUser: () => { },
     setUsers: () => { },
     setTicket: () => { },
@@ -65,6 +67,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [admin, setAdmin] = useState<Admin | null>(null);
     const [loggedInAdmin, setLoggedInAdmin] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isOffline, setIsOffline] = useState(false);
     const searchParams = useSearchParams();
     const router = useRouter();
     const initialLoad = useRef(true);
@@ -141,6 +144,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error("Network response was not ok");
+                setIsOffline(false);
                 return await response.json();
             } catch (error) {
                 attempt++;
@@ -149,6 +153,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     await new Promise(resolve => setTimeout(resolve, 5000));
                 } else {
                     console.error("Failed to fetch after multiple attempts:", error);
+                    setIsOffline(true);
                     throw error;
                 }
             }
@@ -379,6 +384,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         tickets,
         admin,
         loading,
+        isOffline,
         setUser,
         setUsers,
         setTicket,
@@ -401,6 +407,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         tickets,
         admin,
         loading,
+        isOffline,
         setUser,
         setUsers,
         setTicket,
