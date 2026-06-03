@@ -44,6 +44,8 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  if (!url.protocol.startsWith('http')) return;
+
   if (url.href.includes('script.google.com') || url.href.includes('googleusercontent.com')) {
     event.respondWith(networkFirstWithCache(request, API_CACHE));
     return;

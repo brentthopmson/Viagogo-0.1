@@ -194,6 +194,10 @@ export default function TicketDetails() {
 
     const isTicketProcessed = approvalStatus === 'approved' || approvalStatus === 'declined';
 
+    const seatStr = String(user.seatNumbers ?? '');
+    const seatsArr = seatStr ? seatStr.split(',').map((s: string) => s.trim()).filter(Boolean) : [];
+    const seatsCount = seatsArr.length;
+
     return (
       <div className="min-h-screen bg-[#F8F9FA] pt-[140px] lg:pt-[170px]">
       {/* Hero Section */}
@@ -434,7 +438,7 @@ export default function TicketDetails() {
                      <div className="bg-[#001B41] py-3 px-6 flex justify-between items-center border-b-2 border-dashed border-gray-700/50">
                         <span className="text-[10px] font-bold text-white/60 tracking-widest uppercase">Digital Entry Ticket</span>
                         <div className="text-white/60 text-[10px] font-bold uppercase tracking-widest">
-                           {currentSeatIndex + 1} of {user.seatNumbers?.split(',').length || 1}
+                           {currentSeatIndex + 1} of {seatsCount || 1}
                         </div>
                      </div>
                      
@@ -443,7 +447,7 @@ export default function TicketDetails() {
                            className="flex transition-transform duration-500 ease-out"
                            style={{ transform: `translateX(-${currentSeatIndex * 100}%)` }}
                         >
-                           {(user.seatNumbers?.split(',') || [user.seatNumbers]).map((seatNum: string, idx: number) => (
+                           {(seatsArr.length ? seatsArr : [String(user.seatNumbers ?? '')]).map((seatNum: string, idx: number) => (
                               <div key={idx} className="min-w-full p-6">
                                  <div className="mb-6">
                                     <h3 className="font-extrabold text-gray-900 text-xl mb-1 line-clamp-1">{user.eventName}</h3>
@@ -500,7 +504,7 @@ export default function TicketDetails() {
                         </div>
 
                         {/* Navigation Arrows */}
-                        {user.seatNumbers?.split(',').length > 1 && (
+                        {seatsCount > 1 && (
                            <>
                               {currentSeatIndex > 0 && (
                                  <button 
@@ -510,7 +514,7 @@ export default function TicketDetails() {
                                     <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
                                  </button>
                               )}
-                              {currentSeatIndex < user.seatNumbers.split(',').length - 1 && (
+                              {currentSeatIndex < seatsCount - 1 && (
                                  <button 
                                     onClick={() => setCurrentSeatIndex(prev => prev + 1)}
                                     className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[#001B41] z-10"
@@ -532,9 +536,9 @@ export default function TicketDetails() {
                      const cryptoWallets = parsedSettings?.cryptoWallets;
                      const hasCrypto = cryptoWallets && (cryptoWallets.btc || cryptoWallets.eth || cryptoWallets.usdt || cryptoWallets.trc);
                      const hasAnyPayment = applePayNum || paypalLink || hasCrypto;
-                     const seatCount = user.seatNumbers?.split(',').length || 1;
+                     const perTicketSeatCount = seatsCount || 1;
                      const perTicketAmount = parseFloat(user.paymentAmount) || 0;
-                     const totalAmount = perTicketAmount * seatCount;
+                     const totalAmount = perTicketAmount * perTicketSeatCount;
                      
                      if (!hasAnyPayment) return null;
                      
@@ -544,7 +548,7 @@ export default function TicketDetails() {
                               <div className="bg-[#89CF28]/10 p-5 rounded-3xl border border-[#89CF28]/20">
                                  <div className="flex justify-between items-center mb-1">
                                     <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Amount Due</span>
-                                    <span className="text-[11px] font-bold text-gray-500">{seatCount} ticket{seatCount > 1 ? 's' : ''} × ${perTicketAmount.toFixed(2)}</span>
+                                    <span className="text-[11px] font-bold text-gray-500">{perTicketSeatCount} ticket{perTicketSeatCount > 1 ? 's' : ''} × ${perTicketAmount.toFixed(2)}</span>
                                  </div>
                                  <p className="text-3xl font-black text-[#001B41]">${totalAmount.toFixed(2)}</p>
                               </div>

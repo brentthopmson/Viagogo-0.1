@@ -51,6 +51,7 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#00A0D2" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="viagogo" />
         <link rel="apple-touch-startup-image" href="/splash-1024x1024.png" />
@@ -64,9 +65,10 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://media.stubhubstatic.com" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" />
         <style>{`
+          html { background: #001B41; }
           body {
-            padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
+            overscroll-behavior: none;
           }
           header.fixed {
             padding-top: env(safe-area-inset-top);

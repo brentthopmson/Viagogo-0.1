@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '../UserContext';
+import AiTicketCreator from './AiTicketCreator';
+import type { AiTicketData } from '../lib/ai-providers';
 
 interface AddTicketModalProps {
   onClose: () => void;
@@ -12,6 +14,32 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [flipImagesList, setFlipImagesList] = useState<string[]>(['']);
+  const [creationMode, setCreationMode] = useState<'choose' | 'manual' | 'ai'>('choose');
+  const [aiPrefill, setAiPrefill] = useState<AiTicketData | null>(null);
+
+  useEffect(() => {
+    if (creationMode === 'manual' && aiPrefill) {
+      setFormData(prev => ({
+        ...prev,
+        eventName: aiPrefill.eventName || prev.eventName,
+        venue: aiPrefill.venue || prev.venue,
+        location: aiPrefill.location || prev.location,
+        dateTime: aiPrefill.dateTime || prev.dateTime,
+        doorTime: aiPrefill.doorTime || prev.doorTime,
+        section: aiPrefill.section || prev.section,
+        sectionNo: aiPrefill.sectionNo || prev.sectionNo,
+        row: aiPrefill.row || prev.row,
+        seatNumbers: aiPrefill.seatNumbers || prev.seatNumbers,
+        category: aiPrefill.category || prev.category,
+        ageRestriction: aiPrefill.ageRestriction || prev.ageRestriction,
+        description: aiPrefill.description || prev.description,
+        coverImage: aiPrefill.coverImage || prev.coverImage,
+        terms: aiPrefill.terms || prev.terms,
+      }));
+      setAiPrefill(null);
+    }
+  }, [creationMode, aiPrefill]);
+
   const [formData, setFormData] = useState({
     eventName: '',
     venue: '',
@@ -106,6 +134,56 @@ const AddTicketModal: React.FC<AddTicketModalProps> = ({ onClose }) => {
       setLoading(false);
     }
   };
+
+  if (creationMode === 'choose') {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+            <h2 className="text-xl font-black text-[#001B41]">Add New Ticket</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-[#001B41] transition-colors">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+          </div>
+          <p className="text-sm text-gray-500 mb-6">How would you like to proceed?</p>
+          <div className="space-y-3">
+            <button
+              onClick={() => setCreationMode('ai')}
+              className="w-full p-4 bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-200 rounded-xl text-left hover:border-[#89CF28] transition-all group"
+            >
+              <span className="text-lg font-black text-[#001B41] block">AI Assistant</span>
+              <span className="text-sm text-gray-500">Describe the event and let AI generate the details</span>
+            </button>
+            <button
+              onClick={() => setCreationMode('manual')}
+              className="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-left hover:border-gray-300 transition-all group"
+            >
+              <span className="text-lg font-black text-[#001B41] block">Manual Entry</span>
+              <span className="text-sm text-gray-500">Fill in all ticket details yourself</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (creationMode === 'ai') {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+          <AiTicketCreator
+            brandColor="#89CF28"
+            brandName="Viagogo"
+            onApply={(data) => {
+              setAiPrefill(data);
+              setCreationMode('manual');
+            }}
+            onBack={() => setCreationMode('choose')}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
