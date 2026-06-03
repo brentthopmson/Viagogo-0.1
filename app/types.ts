@@ -96,6 +96,8 @@ export interface Admin {
   accountName: string;
   accountEmail: string;
   accountStateCountry: string;
+  accountState?: string;
+  accountCountry?: string;
   allowPayment: string;
   adminSettings: string;
   plan: string;
