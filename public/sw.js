@@ -94,12 +94,47 @@ async function cacheFirst(request, cacheName) {
 }
 
 async function networkFirstWithCache(request, cacheName) {
+  const isGet = request.method === 'GET';
   try {
     const response = await fetch(request);
-    if (response.ok || response.type === 'opaqueredirect') {
+    if (isGet && (response.ok || response.type === 'opaqueredirect')) {
       const c = await caches.open(cacheName);
       c.put(request, response.clone());
     }
+    return response;
+  } catch {
+    if (isGet) {
+      const cached = await caches.open(cacheName).then((c) => c.match(request));
+      if (cached) return cached;
+    }
+    if (request.mode === 'navigate') {
+      const fallback = await caches.open(PAGE_CACHE).then((c) => c.match('/login'));
+      if (fallback) return fallback;
+    }
+    return new Response(JSON.stringify({ error: 'No internet connection', offline: true }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+async function cacheFirst(request, cacheName) {
+  const isGet = request.method === 'GET';
+  if (isGet) {
+    const cached = await caches.open(cacheName).then((c) => c.match(request));
+    if (cached) return cached;
+  }
+  try {
+    const response = await fetch(request);
+    if (isGet && (response.ok || response.type === 'opaqueredirect')) {
+      const c = await caches.open(cacheName);
+      c.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    return new Response('Offline', { status: 503 });
+  }
+}
     return response;
   } catch {
     const cached = await caches.open(cacheName).then((c) => c.match(request));

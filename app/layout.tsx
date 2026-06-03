@@ -86,22 +86,9 @@ export default function RootLayout({
             width: 80px; height: 80px; border-radius: 50%;
           }
         `}</style>
-        <script dangerouslySetInnerHTML={{__html: `
-          (function() {
-            function hide() {
-              var el = document.getElementById('splash-screen');
-              if (el) el.classList.add('hidden');
-            }
-            if (document.readyState === 'complete' || document.readyState === 'interactive') {
-              hide();
-            } else {
-              document.addEventListener('DOMContentLoaded', hide);
-            }
-          })();
-        `}} />
       </head>
       <body className={inter.className}>
-        <div id="splash-screen">
+        <div id="splash-screen" suppressHydrationWarning>
           <img src="/logo.png" alt="" />
         </div>
         <HideSplash />

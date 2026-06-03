@@ -360,7 +360,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [searchParams, router, fetchUserData, fetchAllUsers, fetchAllTickets, fetchTicketData]);
 
-    // Restore admin session from localStorage
+    // Restore admin session from localStorage + background refresh
     useEffect(() => {
         const storedAdminData = localStorage.getItem("adminData");
         
@@ -369,13 +369,30 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 const parsed: Admin = JSON.parse(storedAdminData);
                 setAdmin(parsed);
                 setLoggedInAdmin(parsed.username);
+
+                // Background refresh: fetch latest admin data from sheet
+                (async () => {
+                    try {
+                        const freshAdminData = await fetchWithRetry(APP_SCRIPT_ADMIN_URL) as Admin[];
+                        const matching = freshAdminData.find(a => a.adminId === parsed.adminId);
+                        if (matching) {
+                            matching.token = parsed.token;
+                            setAdmin(matching);
+                            setLoggedInAdmin(matching.username);
+                            localStorage.setItem("adminData", JSON.stringify(matching));
+                            localStorage.setItem("loggedInAdmin", matching.username);
+                        }
+                    } catch (e) {
+                        // Silently ignore — stale cache data is still shown
+                    }
+                })();
             } catch (e) {
                 console.error("Error parsing stored admin data", e);
                 localStorage.removeItem("adminData");
                 localStorage.removeItem("loggedInAdmin");
             }
         }
-    }, []);
+    }, [fetchWithRetry]);
 
     const value = useMemo(() => ({
         user,
