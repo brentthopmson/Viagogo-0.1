@@ -1,10 +1,22 @@
 "use client";
 
-import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle, faExclamationTriangle, faHome } from '@fortawesome/free-solid-svg-icons';
 
+const PLATFORM_CONFIG: Record<string, { url: string; name: string }> = {
+  ticketmaster: { url: 'https://www.ticketmaster.com', name: 'Ticketmaster' },
+  uefa: { url: 'https://www.uefa.com', name: 'UEFA' },
+  viagogo: { url: 'https://www.viagogo.com', name: 'Viagogo' },
+};
+
+const DEFAULT = 'viagogo';
+
 export default function InvalidPage() {
+  const searchParams = useSearchParams();
+  const platform = searchParams.get('platform');
+  const config = PLATFORM_CONFIG[platform || DEFAULT] || PLATFORM_CONFIG[DEFAULT];
+
   return (
     <main className="min-h-screen bg-[#F8F9FA] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -29,20 +41,22 @@ export default function InvalidPage() {
             
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1">Recommended Action</p>
-               <p className="text-sm text-gray-700">Please contact the sender and request a new secure transfer link via Viagogo.</p>
+               <p className="text-sm text-gray-700">Please contact the sender and request a new secure transfer link via {config.name}.</p>
             </div>
 
             <div className="pt-4 space-y-3">
-              <Link 
-                href="/" 
+              <a
+                href={config.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="viagogo-button-primary w-full flex items-center justify-center shadow-lg"
               >
                 <FontAwesomeIcon icon={faHome} className="mr-2" />
-                Back to Marketplace
-              </Link>
+                Visit {config.name}
+              </a>
               
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                Protected by Viagogo FanProtect Guarantee
+                Protected by {config.name} FanProtect Guarantee
               </p>
             </div>
           </div>
@@ -55,4 +69,3 @@ export default function InvalidPage() {
     </main>
   );
 }
-
