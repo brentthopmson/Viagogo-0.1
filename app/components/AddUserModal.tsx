@@ -144,6 +144,12 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       payload.append('senderEmail', formData.senderEmail);
       payload.append('userPlatform', formData.userPlatform);
       payload.append('sendType', formData.sendType);
+      const selectedTicket = tickets.find(t => t.ticketId === selectedTicketId);
+      if (selectedTicket) {
+        if (selectedTicket.gate) payload.append('gate', selectedTicket.gate);
+        if (selectedTicket.entrance) payload.append('entrance', selectedTicket.entrance);
+        if (selectedTicket.hospitalityArea) payload.append('hospitalityArea', selectedTicket.hospitalityArea);
+      }
       payload.append('token', crypto.randomUUID());
 
       let paymentSettingsObj: any = null;
@@ -309,6 +315,32 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                 readOnly
               />
             </div>
+
+            {selectedTicketId && (() => {
+              const sel = tickets.find(t => t.ticketId === selectedTicketId);
+              return sel && (sel.gate || sel.entrance || sel.hospitalityArea) ? (
+                <div className="md:col-span-2 grid grid-cols-3 gap-3">
+                  {sel.gate && (
+                    <div>
+                      <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Gate</label>
+                      <input type="text" value={sel.gate} readOnly className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl font-bold text-[#89CF28] text-gray-500" />
+                    </div>
+                  )}
+                  {sel.entrance && (
+                    <div>
+                      <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Entrance</label>
+                      <input type="text" value={sel.entrance} readOnly className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl font-bold text-[#89CF28] text-gray-500" />
+                    </div>
+                  )}
+                  {sel.hospitalityArea && (
+                    <div>
+                      <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Hospitality Area</label>
+                      <input type="text" value={sel.hospitalityArea} readOnly className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl font-bold text-[#89CF28] text-gray-500" />
+                    </div>
+                  )}
+                </div>
+              ) : null;
+            })()}
             
             {availableSeats.length === 0 && (
               <div>

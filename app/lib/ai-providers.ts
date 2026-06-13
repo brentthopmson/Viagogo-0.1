@@ -6,6 +6,9 @@ export interface AiTicketData {
   doorTime: string;
   section: string;
   sectionNo: string;
+  gate: string;
+  entrance: string;
+  hospitalityArea: string;
   row: string;
   seatNumbers: string;
   category: string;
@@ -284,6 +287,9 @@ Return ONLY valid JSON array, no markdown:
         doorTime: '',
         section: '',
         sectionNo: '',
+        gate: '',
+        entrance: '',
+        hospitalityArea: '',
         row: '',
         seatNumbers: '',
         category: '',
@@ -307,6 +313,9 @@ function normalizeTicketData(item: any, searchResult: SearchResult): AiTicketDat
     doorTime: item.doorTime || '',
     section: item.section || '',
     sectionNo: item.sectionNo || '',
+    gate: item.gate || '',
+    entrance: item.entrance || '',
+    hospitalityArea: item.hospitalityArea || '',
     row: item.row || '',
     seatNumbers: item.seatNumbers || '',
     category: item.category || '',
