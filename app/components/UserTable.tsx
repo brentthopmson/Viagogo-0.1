@@ -24,6 +24,9 @@ const UserTable: React.FC<UserTableProps> = ({ users, tickets }) => {
     senderEmail: '',
     userPlatform: 'viagogo',
     sendType: 'draft',
+    gate: '',
+    entrance: '',
+    hospitalityArea: '',
   });
   const [isActionLoading, setIsActionLoading] = useState(false);
 

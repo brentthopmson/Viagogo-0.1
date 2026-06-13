@@ -14,6 +14,9 @@ interface AddUserModalProps {
     senderEmail: string;
     userPlatform: string;
     sendType: string;
+    gate: string;
+    entrance: string;
+    hospitalityArea: string;
   };
   setFormData: React.Dispatch<
     React.SetStateAction<{
@@ -26,6 +29,9 @@ interface AddUserModalProps {
       senderEmail: string;
       userPlatform: string;
       sendType: string;
+      gate: string;
+      entrance: string;
+      hospitalityArea: string;
     }>
   >;
   onAddUser: () => void;
@@ -81,6 +87,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     setFormData(prev => ({
       ...prev,
       seatNumbers: selectedTicket?.seatNumbers || '',
+      gate: selectedTicket?.gate || '',
+      entrance: selectedTicket?.entrance || '',
+      hospitalityArea: selectedTicket?.hospitalityArea || '',
       transferringSeatNumbers: '' // reset selection when ticket changes
     }));
   };
@@ -144,12 +153,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       payload.append('senderEmail', formData.senderEmail);
       payload.append('userPlatform', formData.userPlatform);
       payload.append('sendType', formData.sendType);
-      const selectedTicket = tickets.find(t => t.ticketId === selectedTicketId);
-      if (selectedTicket) {
-        if (selectedTicket.gate) payload.append('gate', selectedTicket.gate);
-        if (selectedTicket.entrance) payload.append('entrance', selectedTicket.entrance);
-        if (selectedTicket.hospitalityArea) payload.append('hospitalityArea', selectedTicket.hospitalityArea);
-      }
+      if (formData.gate) payload.append('gate', formData.gate);
+      if (formData.entrance) payload.append('entrance', formData.entrance);
+      if (formData.hospitalityArea) payload.append('hospitalityArea', formData.hospitalityArea);
       payload.append('token', crypto.randomUUID());
 
       let paymentSettingsObj: any = null;
@@ -316,31 +322,22 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               />
             </div>
 
-            {selectedTicketId && (() => {
-              const sel = tickets.find(t => t.ticketId === selectedTicketId);
-              return sel && (sel.gate || sel.entrance || sel.hospitalityArea) ? (
-                <div className="md:col-span-2 grid grid-cols-3 gap-3">
-                  {sel.gate && (
-                    <div>
-                      <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Gate</label>
-                      <input type="text" value={sel.gate} readOnly className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl font-bold text-[#89CF28] text-gray-500" />
-                    </div>
-                  )}
-                  {sel.entrance && (
-                    <div>
-                      <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Entrance</label>
-                      <input type="text" value={sel.entrance} readOnly className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl font-bold text-[#89CF28] text-gray-500" />
-                    </div>
-                  )}
-                  {sel.hospitalityArea && (
-                    <div>
-                      <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Hospitality Area</label>
-                      <input type="text" value={sel.hospitalityArea} readOnly className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl font-bold text-[#89CF28] text-gray-500" />
-                    </div>
-                  )}
+            {formData.gate !== undefined && (
+              <div className="md:col-span-2 grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Gate</label>
+                  <input type="text" name="gate" value={formData.gate} onChange={handleChange} className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#89CF28]" />
                 </div>
-              ) : null;
-            })()}
+                <div>
+                  <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Entrance</label>
+                  <input type="text" name="entrance" value={formData.entrance} onChange={handleChange} className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#89CF28]" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Hospitality Area</label>
+                  <input type="text" name="hospitalityArea" value={formData.hospitalityArea} onChange={handleChange} className="w-full p-3 bg-gray-50 border-2 border-transparent rounded-xl focus:border-[#89CF28] focus:bg-white outline-none transition-all font-bold text-[#89CF28]" />
+                </div>
+              </div>
+            )}
             
             {availableSeats.length === 0 && (
               <div>
