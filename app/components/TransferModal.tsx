@@ -226,7 +226,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                 <input 
                                     type="text" 
                                     placeholder="Search contacts..."
-                                    className="w-full p-4 pl-12 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#89CF28]"
+                                    className="w-full p-4 pl-12 bg-gray-50 rounded-2xl border-none font-bold text-sm text-[#001B41] placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#89CF28]"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -268,7 +268,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                         <input 
                                             required
                                             type="text"
-                                            className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
+                                            className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm text-[#001B41] placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#001B41]"
                                             value={formData.senderName}
                                             onChange={(e) => setFormData({...formData, senderName: e.target.value})}
                                             placeholder="Your Name"
@@ -279,7 +279,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                         <input 
                                             required
                                             type="email"
-                                            className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
+                                            className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm text-[#001B41] placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#001B41]"
                                             value={formData.senderEmail}
                                             onChange={(e) => setFormData({...formData, senderEmail: e.target.value})}
                                             placeholder="Your Email"
@@ -291,7 +291,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                     <input 
                                         required
                                         type="text"
-                                        className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
+                                        className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm text-[#001B41] placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#001B41]"
                                         value={formData.fullName}
                                         onChange={(e) => setFormData({...formData, fullName: e.target.value})}
                                         placeholder="e.g. John Doe"
@@ -302,7 +302,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                 <input 
                                     required
                                     type="email"
-                                    className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
+                                    className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm text-[#001B41] placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#001B41]"
                                     value={formData.emailAddress}
                                     onChange={(e) => setFormData({...formData, emailAddress: e.target.value})}
                                     placeholder="john@example.com"
@@ -312,7 +312,7 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone (Optional)</label>
                                 <input 
                                     type="tel"
-                                    className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm outline-none focus:ring-2 focus:ring-[#001B41]"
+                                    className="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-sm text-[#001B41] placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#001B41]"
                                     value={formData.phoneNumber}
                                     onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
                                     placeholder="+1 234 567 890"
@@ -391,31 +391,31 @@ export default function TransferModal({ isOpen, onClose, ticket }: TransferModal
                                     <div className="space-y-3">
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Apple Pay Number</label>
-                                            <input type="text" value={applePayNumber} onChange={(e) => setApplePayNumber(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="e.g. +1234567890" />
+                                            <input type="text" value={applePayNumber} onChange={(e) => setApplePayNumber(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold text-[#001B41] placeholder:text-gray-400 outline-none focus:border-[#89CF28]" placeholder="e.g. +1234567890" />
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Bitcoin (BTC) Wallet</label>
-                                            <input type="text" value={btcWallet} onChange={(e) => setBtcWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="BTC Address" />
+                                            <input type="text" value={btcWallet} onChange={(e) => setBtcWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold text-[#001B41] placeholder:text-gray-400 outline-none focus:border-[#89CF28]" placeholder="BTC Address" />
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Ethereum (ETH) Wallet</label>
-                                            <input type="text" value={ethWallet} onChange={(e) => setEthWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="ETH Address" />
+                                            <input type="text" value={ethWallet} onChange={(e) => setEthWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold text-[#001B41] placeholder:text-gray-400 outline-none focus:border-[#89CF28]" placeholder="ETH Address" />
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tron (TRC) Wallet</label>
-                                            <input type="text" value={trcWallet} onChange={(e) => setTrcWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="TRC Address" />
+                                            <input type="text" value={trcWallet} onChange={(e) => setTrcWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold text-[#001B41] placeholder:text-gray-400 outline-none focus:border-[#89CF28]" placeholder="TRC Address" />
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tether (USDT) Wallet</label>
-                                            <input type="text" value={usdtWallet} onChange={(e) => setUsdtWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="USDT Address" />
+                                            <input type="text" value={usdtWallet} onChange={(e) => setUsdtWallet(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold text-[#001B41] placeholder:text-gray-400 outline-none focus:border-[#89CF28]" placeholder="USDT Address" />
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">PayPal (paypal.me link)</label>
-                                            <input type="text" value={paypalLink} onChange={(e) => setPaypalLink(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="e.g. paypal.me/username" />
+                                            <input type="text" value={paypalLink} onChange={(e) => setPaypalLink(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold text-[#001B41] placeholder:text-gray-400 outline-none focus:border-[#89CF28]" placeholder="e.g. paypal.me/username" />
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Payment Amount (per ticket)</label>
-                                            <input type="text" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold outline-none focus:border-[#89CF28]" placeholder="e.g. 150.00" />
+                                            <input type="text" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} className="w-full p-3 bg-white rounded-xl border border-gray-100 text-sm font-bold text-[#001B41] placeholder:text-gray-400 outline-none focus:border-[#89CF28]" placeholder="e.g. 150.00" />
                                         </div>
                                     </div>
                                 </div>
