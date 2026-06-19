@@ -167,7 +167,66 @@ const UpdateTicketModal: React.FC<UpdateTicketModalProps> = ({ ticket, onClose }
                 className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
-            
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 mb-1">Gate</label>
+              <input
+                type="text"
+                name="gate"
+                value={formData.gate || ''}
+                onChange={handleChange}
+                placeholder="e.g. G, 3, A"
+                className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 mb-1">Entrance</label>
+              <input
+                type="text"
+                name="entrance"
+                value={formData.entrance || ''}
+                onChange={handleChange}
+                placeholder="e.g. E, VIP, North"
+                className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 mb-1">Hospitality Area</label>
+              <input
+                type="text"
+                name="hospitalityArea"
+                value={formData.hospitalityArea || ''}
+                onChange={handleChange}
+                placeholder="e.g. Village A, Lounge B"
+                className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 mb-1">Category</label>
+              <input
+                type="text"
+                name="category"
+                value={formData.category || ''}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 mb-1">Ticket Holder</label>
+              <input
+                type="text"
+                name="ticketHolder"
+                value={formData.ticketHolder || ''}
+                onChange={handleChange}
+                placeholder="e.g. John Doe"
+                className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
+
             <div>
               <label className="block text-gray-700 dark:text-gray-300 mb-1">Row*</label>
               <input
@@ -177,6 +236,18 @@ const UpdateTicketModal: React.FC<UpdateTicketModalProps> = ({ ticket, onClose }
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
                 required
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 mb-1">Seat Numbers</label>
+              <input
+                type="text"
+                name="seatNumbers"
+                value={formData.seatNumbers || ''}
+                onChange={handleChange}
+                placeholder="e.g. 101, 102"
+                className="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
             
