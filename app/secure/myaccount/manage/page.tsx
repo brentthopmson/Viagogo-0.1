@@ -9,7 +9,7 @@ import TicketTable from '../../../components/TicketTable';
 import SubAdminTable from '../../../components/SubAdminTable';
 import { User, Ticket } from '../../../types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faTicketAlt, faSignOutAlt, faChevronLeft, faUserShield } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faTicketAlt, faSignOutAlt, faChevronLeft, faUserShield, faEye } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 
 export default function ManageDashboard() {
@@ -146,6 +146,13 @@ export default function ManageDashboard() {
                                 </button>
                             )}
                         </div>
+                        <Link
+                            href="/secure/myaccount/tickets?revealAll=1"
+                            className="bg-[#89CF28] hover:opacity-90 text-white px-4 py-2 rounded-md flex items-center"
+                        >
+                            <FontAwesomeIcon icon={faEye} className="mr-2" />
+                            <span>Reveal Hidden</span>
+                        </Link>
                         <button
                             onClick={handleLogout}
                             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center"
